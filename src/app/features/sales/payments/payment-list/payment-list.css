@@ -1,0 +1,84 @@
+.list-container {
+  padding: 24px;
+}
+
+.list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.list-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.list-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 64px 0;
+}
+
+.table-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+}
+
+.code-chip {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: monospace;
+}
+
+.amount {
+  font-weight: 500;
+}
+
+.mode-chip {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1565c0;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.muted {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 0;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: rgba(0, 0, 0, 0.2);
+  display: block;
+  margin: 0 auto 12px;
+}

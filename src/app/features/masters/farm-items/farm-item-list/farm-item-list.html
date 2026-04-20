@@ -1,0 +1,83 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Farm Items</h1>
+    <p class="page-subtitle">Manage items assigned to each farm</p>
+  </div>
+  <button mat-flat-button color="primary" (click)="openAddDialog()">
+    <mat-icon>add</mat-icon>
+    Add Items
+  </button>
+</div>
+
+<div class="table-card">
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (farmItems().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">inventory</mat-icon>
+      <p>No farm items found. Add items to a farm to get started.</p>
+      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Farm Items</button>
+    </div>
+  } @else {
+    <table mat-table [dataSource]="farmItems()" class="farm-items-table">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="code-chip">{{ item.code }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="farm">
+        <th mat-header-cell *matHeaderCellDef>Farm</th>
+        <td mat-cell *matCellDef="let item">{{ item.farm?.name ?? '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef>Item</th>
+        <td mat-cell *matCellDef="let item">
+          {{ item.item_master?.name ?? '—' }}
+          @if (item.item_master?.unit_of_measure?.code) {
+            <span class="uom-code">({{ item.item_master.unit_of_measure.code }})</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>Quantity</th>
+        <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="status-chip" [class.active]="isActive(item)" [class.inactive]="!isActive(item)">
+            {{ item.status?.name ?? '—' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let item" class="actions-cell">
+          <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator
+      [length]="totalItems()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    />
+  }
+</div>

@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Payment' : 'Record Payment' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="form" class="form-grid">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Customer</mat-label>
+        <mat-select formControlName="customer_id">
+          @if (!isEditMode) {
+            <div class="select-search-wrapper" (mousedown)="$event.stopPropagation()">
+              <input
+                class="select-search-input"
+                type="text"
+                placeholder="Search customers…"
+                [value]="customerSearch()"
+                (input)="customerSearch.set($any($event.target).value)"
+              />
+            </div>
+          }
+          @for (c of filteredCustomers(); track c.id) {
+            <mat-option [value]="c.id">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.customer_id.hasError('required')) {
+          <mat-error>Customer is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Currency</mat-label>
+        <mat-select formControlName="currency_id">
+          @for (c of currencies(); track c.id) {
+            <mat-option [value]="c.id">{{ c.code }} — {{ c.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.currency_id.hasError('required')) {
+          <mat-error>Currency is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Amount</mat-label>
+        <input matInput type="number" formControlName="amount" placeholder="0.00" min="0.01" step="0.01" />
+        @if (form.controls.amount.hasError('required')) {
+          <mat-error>Amount is required</mat-error>
+        }
+        @if (form.controls.amount.hasError('min')) {
+          <mat-error>Must be greater than 0</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="date" />
+        @if (form.controls.date.hasError('required')) {
+          <mat-error>Date is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Payment Mode</mat-label>
+        <mat-select formControlName="payment_mode_id">
+          <mat-option [value]="null">— None —</mat-option>
+          @for (m of paymentModes(); track m.id) {
+            <mat-option [value]="m.id">{{ m.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes" rows="3" placeholder="Optional notes…"></textarea>
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Record' }}
+    }
+  </button>
+</mat-dialog-actions>

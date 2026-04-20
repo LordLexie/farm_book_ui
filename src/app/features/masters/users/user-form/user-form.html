@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit User' : 'Add User' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingRoles()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="form" class="form-body">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="Full name" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>Name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="email@example.com" />
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>Email is required</mat-error>
+        }
+        @if (form.controls.email.hasError('email')) {
+          <mat-error>Enter a valid email address</mat-error>
+        }
+      </mat-form-field>
+
+      @if (!isEditMode) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" />
+          @if (form.controls.password.hasError('required')) {
+            <mat-error>Password is required</mat-error>
+          }
+          @if (form.controls.password.hasError('minlength')) {
+            <mat-error>Password must be at least 8 characters</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          @for (r of roles(); track r.id) {
+            <mat-option [value]="r.name">{{ r.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.role.hasError('required')) {
+          <mat-error>Role is required</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid || isSaving() || isLoadingRoles()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save User' : 'Add User' }}
+    }
+  </button>
+</mat-dialog-actions>

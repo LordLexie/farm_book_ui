@@ -1,0 +1,190 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="sidenav-header">
+      <mat-icon class="logo-icon">agriculture</mat-icon>
+      <span class="app-name">Farm App</span>
+    </div>
+
+    <mat-nav-list>
+      <a
+        mat-list-item
+        routerLink="/dashboard"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+
+      <div class="nav-group-toggle" [class.open]="mastersOpen" (click)="toggleMasters()">
+        <mat-icon class="nav-group-icon">folder</mat-icon>
+        <span class="nav-group-label">Masters</span>
+        <mat-icon class="chevron" [class.open]="mastersOpen">chevron_right</mat-icon>
+      </div>
+
+      <div class="nav-group-children" [class.expanded]="mastersOpen">
+        <a mat-list-item routerLink="/masters/farms" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>agriculture</mat-icon>
+          <span matListItemTitle>Farms</span>
+        </a>
+        <a mat-list-item routerLink="/masters/farm-items" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>inventory</mat-icon>
+          <span matListItemTitle>Farm Items</span>
+        </a>
+        <a mat-list-item routerLink="/masters/item-masters" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>inventory_2</mat-icon>
+          <span matListItemTitle>Items</span>
+        </a>
+        <a mat-list-item routerLink="/masters/item-categories" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>category</mat-icon>
+          <span matListItemTitle>Item Categories</span>
+        </a>
+        <a mat-list-item routerLink="/masters/unit-of-measures" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>straighten</mat-icon>
+          <span matListItemTitle>Unit of Measures</span>
+        </a>
+        <a mat-list-item routerLink="/masters/services" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>miscellaneous_services</mat-icon>
+          <span matListItemTitle>Services</span>
+        </a>
+        <a mat-list-item routerLink="/masters/service-types" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>label</mat-icon>
+          <span matListItemTitle>Service Types</span>
+        </a>
+        <a mat-list-item routerLink="/masters/milk-rates" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>price_change</mat-icon>
+          <span matListItemTitle>Milk Rates</span>
+        </a>
+      </div>
+      <div class="nav-group-toggle" [class.open]="accessControlOpen" (click)="toggleAccessControl()">
+        <mat-icon class="nav-group-icon">shield</mat-icon>
+        <span class="nav-group-label">Access Control</span>
+        <mat-icon class="chevron" [class.open]="accessControlOpen">chevron_right</mat-icon>
+      </div>
+
+      <div class="nav-group-children" [class.expanded]="accessControlOpen">
+        <a mat-list-item routerLink="/masters/users" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>person</mat-icon>
+          <span matListItemTitle>Users</span>
+        </a>
+        <a mat-list-item routerLink="/masters/roles" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>manage_accounts</mat-icon>
+          <span matListItemTitle>Roles</span>
+        </a>
+        <a mat-list-item routerLink="/masters/permissions" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>lock</mat-icon>
+          <span matListItemTitle>Permissions</span>
+        </a>
+      </div>
+
+      <div class="nav-group-toggle" [class.open]="expensesOpen" (click)="toggleExpenses()">
+        <mat-icon class="nav-group-icon">receipt_long</mat-icon>
+        <span class="nav-group-label">Expenses</span>
+        <mat-icon class="chevron" [class.open]="expensesOpen">chevron_right</mat-icon>
+      </div>
+
+      <div class="nav-group-children" [class.expanded]="expensesOpen">
+        <a mat-list-item routerLink="/expenses/suppliers" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>local_shipping</mat-icon>
+          <span matListItemTitle>Suppliers</span>
+        </a>
+        <a mat-list-item routerLink="/expenses/purchases" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>shopping_cart</mat-icon>
+          <span matListItemTitle>Purchases</span>
+        </a>
+        <a mat-list-item routerLink="/expenses/bills" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>receipt</mat-icon>
+          <span matListItemTitle>Bills</span>
+        </a>
+      </div>
+
+      <div class="nav-group-toggle" [class.open]="salesOpen" (click)="toggleSales()">
+        <mat-icon class="nav-group-icon">point_of_sale</mat-icon>
+        <span class="nav-group-label">Sales</span>
+        <mat-icon class="chevron" [class.open]="salesOpen">chevron_right</mat-icon>
+      </div>
+
+      <div class="nav-group-children" [class.expanded]="salesOpen">
+        <a mat-list-item routerLink="/sales/customers" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Customers</span>
+        </a>
+        <a mat-list-item routerLink="/sales/quotations" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>request_quote</mat-icon>
+          <span matListItemTitle>Quotations</span>
+        </a>
+        <a mat-list-item routerLink="/sales/invoices" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>description</mat-icon>
+          <span matListItemTitle>Invoices</span>
+        </a>
+        <a mat-list-item routerLink="/sales/payments" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>payments</mat-icon>
+          <span matListItemTitle>Payments</span>
+        </a>
+      </div>
+
+      <a mat-list-item routerLink="/livestock/farm-livestocks" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>agriculture</mat-icon>
+        <span matListItemTitle>Livestock</span>
+      </a>
+
+      <a mat-list-item routerLink="/livestock/farm-consumptions" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>grass</mat-icon>
+        <span matListItemTitle>Consumptions</span>
+      </a>
+
+      <a mat-list-item routerLink="/milk/milk-productions" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>water_drop</mat-icon>
+        <span matListItemTitle>Milk Production</span>
+      </a>
+
+      <a mat-list-item routerLink="/milk-sales" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>sell</mat-icon>
+        <span matListItemTitle>Milk Sales</span>
+      </a>
+
+      <div class="nav-group-toggle" [class.open]="reportsOpen" (click)="toggleReports()">
+        <mat-icon class="nav-group-icon">bar_chart</mat-icon>
+        <span class="nav-group-label">Reports</span>
+        <mat-icon class="chevron" [class.open]="reportsOpen">chevron_right</mat-icon>
+      </div>
+
+      <div class="nav-group-children" [class.expanded]="reportsOpen">
+        <a mat-list-item routerLink="/reports/sales-analytics" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>show_chart</mat-icon>
+          <span matListItemTitle>Sales Analytics</span>
+        </a>
+        <a mat-list-item routerLink="/reports/consumption-analytics" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>pie_chart</mat-icon>
+          <span matListItemTitle>Consumption Analytics</span>
+        </a>
+        <a mat-list-item routerLink="/reports/milk-production" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>water_drop</mat-icon>
+          <span matListItemTitle>Milk Production</span>
+        </a>
+        <a mat-list-item routerLink="/reports/expense-analytics" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
+          <span matListItemTitle>Expense Analytics</span>
+        </a>
+        <a mat-list-item routerLink="/reports/invoice-aging" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>schedule</mat-icon>
+          <span matListItemTitle>Invoice Aging</span>
+        </a>
+      </div>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content-container">
+    <mat-toolbar color="primary" class="toolbar">
+      <span class="toolbar-title">Farm Management</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="logout()" aria-label="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

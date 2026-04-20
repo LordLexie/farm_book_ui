@@ -1,0 +1,346 @@
+.analytics-container {
+  max-width: 1200px;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.page-subtitle {
+  margin: 0 0 32px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  transition: box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14) !important;
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.stat-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.stat-icon-wrapper mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Skeleton loading */
+.stat-card--skeleton {
+  pointer-events: none;
+}
+
+.skeleton-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  flex-shrink: 0;
+}
+
+.skeleton-value {
+  width: 64px;
+  height: 28px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-bottom: 6px;
+}
+
+.skeleton-label {
+  width: 96px;
+  height: 13px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.38);
+  margin: 36px 0 16px;
+}
+
+.panels-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.panel-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  min-height: 160px;
+  transition: box-shadow 0.2s ease;
+}
+
+.panel-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14) !important;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.panel-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.panel-subtitle {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 2px;
+}
+
+.panel-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+/* Aging bucket bar chart */
+.bucket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bucket-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bucket-label {
+  width: 80px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  flex-shrink: 0;
+}
+
+.bucket-bar-wrap {
+  flex: 1;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.bucket-bar {
+  height: 100%;
+  border-radius: 5px;
+  min-width: 2px;
+  transition: width 0.3s ease;
+}
+
+.bucket-total {
+  width: 72px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+  flex-shrink: 0;
+  text-align: right;
+}
+
+/* Line chart */
+.chart-wrap {
+  margin-top: 4px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.chart-grid {
+  stroke: rgba(0, 0, 0, 0.07);
+  stroke-width: 1;
+}
+
+.chart-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.chart-line--blue { stroke: #1565c0; }
+
+.chart-fill {
+  opacity: 0.12;
+}
+
+.chart-fill--blue { fill: #1565c0; }
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+/* Top customers list */
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-rank {
+  width: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.38);
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.item-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.item-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+  flex-shrink: 0;
+}
+
+/* Recent overdue invoices list */
+.invoice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.invoice-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.invoice-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-customer {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.invoice-meta {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.invoice-balance {
+  font-size: 13px;
+  font-weight: 600;
+  color: #c62828;
+  flex-shrink: 0;
+}

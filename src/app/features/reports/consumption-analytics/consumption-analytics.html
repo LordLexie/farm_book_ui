@@ -1,0 +1,167 @@
+<div class="analytics-container">
+  <h1 class="page-title">Consumption</h1>
+  <p class="page-subtitle">Track feed and item usage across animals and sessions</p>
+
+  <div class="stats-grid">
+    @if (isLoadingStats()) {
+      @for (i of [1,2,3,4,5]; track i) {
+        <mat-card class="stat-card stat-card--skeleton">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="skeleton-icon"></div>
+              <div class="stat-info">
+                <div class="skeleton-value"></div>
+                <div class="skeleton-label"></div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    } @else {
+      @for (stat of stats(); track stat.label) {
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" [style.background-color]="stat.color + '1a'">
+                <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <div class="section-label">Insights</div>
+
+  <div class="panels-grid">
+    <!-- Daily Consumption Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">show_chart</mat-icon>
+          <div>
+            <div class="panel-title">Daily Consumption Trend</div>
+            <div class="panel-subtitle">Last 30 days</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (dailyChartPoints().line === '') {
+          <div class="panel-empty"><span>No consumption data</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="dailyChartPoints().fill" class="chart-fill chart-fill--green"/>
+              <polyline [attr.points]="dailyChartPoints().line" class="chart-line chart-line--green"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of dailyChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Monthly Consumption Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">trending_up</mat-icon>
+          <div>
+            <div class="panel-title">Monthly Consumption Trend</div>
+            <div class="panel-subtitle">Last 6 months</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (monthlyChartPoints().line === '') {
+          <div class="panel-empty"><span>No consumption data</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="monthlyChartPoints().fill" class="chart-fill chart-fill--teal"/>
+              <polyline [attr.points]="monthlyChartPoints().line" class="chart-line chart-line--teal"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of monthlyChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Consumed Items -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">leaderboard</mat-icon>
+          <div>
+            <div class="panel-title">Top Consumed Items</div>
+            <div class="panel-subtitle">By quantity this month</div>
+          </div>
+        </div>
+        @if (isLoadingPanels()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (topItemsData().length === 0) {
+          <div class="panel-empty"><span>No data yet</span></div>
+        } @else {
+          <div class="item-list">
+            @for (item of topItemsData(); track item.name; let i = $index) {
+              <div class="item-row">
+                <span class="item-rank">{{ i + 1 }}</span>
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-total">{{ item.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Consumption by Animal -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">pets</mat-icon>
+          <div>
+            <div class="panel-title">Consumption by Animal</div>
+            <div class="panel-subtitle">Top consumers this month</div>
+          </div>
+        </div>
+        @if (isLoadingPanels()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (byAnimalData().length === 0) {
+          <div class="panel-empty"><span>No data yet</span></div>
+        } @else {
+          <div class="animal-list">
+            @for (animal of byAnimalData(); track animal.code; let i = $index) {
+              <div class="animal-row">
+                <span class="animal-rank">{{ i + 1 }}</span>
+                <div class="animal-info">
+                  <span class="animal-name">{{ animal.name }}</span>
+                  <span class="animal-code">{{ animal.code }}</span>
+                </div>
+                <span class="animal-total">{{ animal.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Farm' : 'Add Farm' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="form" class="form-grid">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="e.g. North Farm" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>Name is required</mat-error>
+        }
+        @if (form.controls.name.hasError('maxlength')) {
+          <mat-error>Name must be 255 characters or fewer</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Latitude</mat-label>
+        <input matInput formControlName="latitude" placeholder="e.g. -1.2921" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Longitude</mat-label>
+        <input matInput formControlName="longitude" placeholder="e.g. 36.8219" />
+      </mat-form-field>
+
+      @if (isEditMode) {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status_id">
+            @for (status of statuses(); track status.id) {
+              <mat-option [value]="status.id">{{ status.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Add Farm' }}
+    }
+  </button>
+</mat-dialog-actions>

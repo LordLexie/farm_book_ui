@@ -1,0 +1,74 @@
+<div class="list-container">
+  <div class="list-header">
+    <div>
+      <h2 class="list-title">Milk Production</h2>
+      <p class="list-subtitle">Track milk yield from livestock</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Record Production
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else {
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="milkProductions()" class="mat-elevation-z1">
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let row">{{ row.date }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="session">
+          <th mat-header-cell *matHeaderCellDef>Session</th>
+          <td mat-cell *matCellDef="let row">{{ sessionLabel(row) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="livestock">
+          <th mat-header-cell *matHeaderCellDef>Livestock</th>
+          <td mat-cell *matCellDef="let row">{{ livestockLabel(row) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity (L)</th>
+          <td mat-cell *matCellDef="let row">{{ row.quantity | number:'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="recorded_by">
+          <th mat-header-cell *matHeaderCellDef>Recorded By</th>
+          <td mat-cell *matCellDef="let row">{{ row.creator?.name ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button (click)="openEditDialog(row)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+            <mat-icon class="empty-icon">water_drop</mat-icon>
+            <p>No milk production records yet.</p>
+          </td>
+        </tr>
+      </table>
+      <mat-paginator
+        [length]="totalItems()"
+        [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)"
+      />
+    </div>
+  }
+</div>

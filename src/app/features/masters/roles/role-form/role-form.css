@@ -1,0 +1,43 @@
+.form-body {
+  padding-top: 8px;
+  min-width: 420px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section-label {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.permissions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+}
+
+.loading-options {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+  min-width: 420px;
+}
+
+.error-banner {
+  background: #fdecea;
+  color: #c62828;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+mat-spinner {
+  display: inline-flex;
+}

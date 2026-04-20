@@ -1,0 +1,103 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Customers</h1>
+    <p class="page-subtitle">Manage your customers and their account balances</p>
+  </div>
+  <button mat-flat-button color="primary" (click)="openAddDialog()">
+    <mat-icon>add</mat-icon>
+    Add Customer
+  </button>
+</div>
+
+<div class="table-card">
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (customers().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">people</mat-icon>
+      <p>No customers yet.</p>
+      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Customer</button>
+    </div>
+  } @else {
+    <table mat-table [dataSource]="customers()" class="data-table">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="code-chip">{{ item.code }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="type-chip" [class.individual]="item.type === 'individual'">
+            {{ item.type === 'individual' ? 'Individual' : 'Organization' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let item">{{ item.email ?? '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef>Phone</th>
+        <td mat-cell *matCellDef="let item">{{ item.phone ?? '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount_due">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Amount Due</th>
+        <td mat-cell *matCellDef="let item" class="col-right">
+          <span class="amount-due" [class.has-balance]="item.amount_due > 0">
+            {{ item.amount_due | number:'1.2-2' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="credit">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Credit</th>
+        <td mat-cell *matCellDef="let item" class="col-right">
+          <span class="credit-amount" [class.has-credit]="item.credit > 0">
+            {{ item.credit | number:'1.2-2' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="status-chip" [class.active]="isActive(item)" [class.inactive]="!isActive(item)">
+            {{ item.status?.name ?? '—' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let item" class="actions-cell">
+          <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator
+      [length]="totalItems()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+    />
+  }
+</div>

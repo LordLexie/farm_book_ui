@@ -1,0 +1,147 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Milk Production' : 'Record Milk Production' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="headerForm" class="header-section">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Session</mat-label>
+        <mat-select formControlName="farm_session_id">
+          @for (s of sessions(); track s.id) {
+            <mat-option [value]="s.id">{{ sessionLabel(s) }}</mat-option>
+          }
+        </mat-select>
+        @if (headerForm.controls.farm_session_id.hasError('required')) {
+          <mat-error>Session is required</mat-error>
+        }
+      </mat-form-field>
+    </form>
+
+    @if (isEditMode) {
+      <form [formGroup]="editForm" class="edit-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Livestock</mat-label>
+          <mat-select formControlName="livestock_id" (openedChange)="!$event && livestockSearch.set('')">
+            <div class="select-search-wrapper" (mousedown)="$event.stopPropagation()">
+              <input class="select-search-input" type="text" placeholder="Search livestock…"
+                [value]="livestockSearch()" (input)="livestockSearch.set($any($event.target).value)" />
+            </div>
+            @for (ls of filteredLivestocks(); track ls.id) {
+              <mat-option [value]="ls.id">{{ livestockLabel(ls) }}</mat-option>
+            }
+          </mat-select>
+          @if (editForm.controls.livestock_id.hasError('required')) {
+            <mat-error>Livestock is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" formControlName="date" />
+          @if (editForm.controls.date.hasError('required')) {
+            <mat-error>Date is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Quantity (L)</mat-label>
+          <input matInput type="number" formControlName="quantity" placeholder="0" min="0" step="0.01" />
+          @if (editForm.controls.quantity.hasError('required')) {
+            <mat-error>Quantity is required</mat-error>
+          }
+          @if (editForm.controls.quantity.hasError('min')) {
+            <mat-error>Must be 0 or greater</mat-error>
+          }
+        </mat-form-field>
+
+      </form>
+    } @else {
+      <div class="rows-section">
+        <div class="rows-header">
+          <span class="col-label col-livestock">Livestock</span>
+          <span class="col-label col-date">Date</span>
+          <span class="col-label col-qty">Qty (L)</span>
+          <span class="col-action"></span>
+        </div>
+
+        <form [formGroup]="rowsForm">
+          <div formArrayName="rows">
+            @for (row of rows.controls; track $index; let i = $index) {
+              <div [formGroupName]="i" class="row-item">
+                <mat-form-field appearance="outline" class="col-livestock">
+                  <mat-select formControlName="livestock_id" placeholder="Select livestock" (openedChange)="!$event && livestockSearch.set('')">
+                    <div class="select-search-wrapper" (mousedown)="$event.stopPropagation()">
+                      <input class="select-search-input" type="text" placeholder="Search livestock…"
+                        [value]="livestockSearch()" (input)="livestockSearch.set($any($event.target).value)" />
+                    </div>
+                    @for (ls of filteredLivestocks(); track ls.id) {
+                      <mat-option [value]="ls.id">{{ livestockLabel(ls) }}</mat-option>
+                    }
+                  </mat-select>
+                  @if (rows.at(i).get('livestock_id')?.hasError('required') && rows.at(i).get('livestock_id')?.touched) {
+                    <mat-error>Required</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="col-date">
+                  <input matInput type="date" formControlName="date" />
+                  @if (rows.at(i).get('date')?.hasError('required') && rows.at(i).get('date')?.touched) {
+                    <mat-error>Required</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="col-qty">
+                  <input matInput type="number" formControlName="quantity" placeholder="0" min="0" step="0.01" />
+                  @if (rows.at(i).get('quantity')?.hasError('required') && rows.at(i).get('quantity')?.touched) {
+                    <mat-error>Required</mat-error>
+                  }
+                </mat-form-field>
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="remove-btn"
+                  [disabled]="rows.length === 1"
+                  (click)="removeRow(i)"
+                  matTooltip="Remove row"
+                >
+                  <mat-icon>remove_circle_outline</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </form>
+
+        <div class="rows-footer">
+          <button mat-button type="button" color="primary" (click)="addRow()">
+            <mat-icon>add</mat-icon>
+            Add Row
+          </button>
+        </div>
+      </div>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="headerForm.invalid || (isEditMode ? editForm.invalid : rowsForm.invalid) || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Record' }}
+    }
+  </button>
+</mat-dialog-actions>

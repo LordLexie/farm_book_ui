@@ -1,0 +1,60 @@
+<div class="edit-page-header">
+  <button mat-icon-button (click)="router.navigate(['/masters/roles'])" matTooltip="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div class="edit-page-title-wrap">
+    <h1 class="edit-page-title">Edit Role{{ role() ? ' — ' + role()!.name : '' }}</h1>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="40" />
+  </div>
+} @else {
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  <div class="edit-card">
+    <form [formGroup]="form">
+      <mat-form-field appearance="outline" class="name-field">
+        <mat-label>Role Name</mat-label>
+        <input matInput formControlName="name" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>Role name is required</mat-error>
+        }
+        @if (form.controls.name.hasError('maxlength')) {
+          <mat-error>Name must be 255 characters or fewer</mat-error>
+        }
+      </mat-form-field>
+    </form>
+
+    @if (permissionRows().length > 0) {
+      <p class="section-label">Permissions</p>
+      <div class="permissions-grid">
+        @for (row of permissionRows(); track row.permission.id) {
+          <mat-checkbox [checked]="row.checked" (change)="togglePermission(row)">
+            {{ row.permission.name }}
+          </mat-checkbox>
+        }
+      </div>
+    }
+
+    <div class="form-actions">
+      <button mat-button (click)="router.navigate(['/masters/roles'])">Cancel</button>
+      <button
+        mat-flat-button
+        color="primary"
+        [disabled]="form.invalid || isSaving()"
+        (click)="submit()"
+      >
+        @if (isSaving()) {
+          <mat-spinner diameter="18" />
+        } @else {
+          Save Role
+        }
+      </button>
+    </div>
+  </div>
+}

@@ -1,0 +1,87 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit ' + data.config.title.replace(/s$/, '') : 'Add ' + data.config.title }}</h2>
+
+<mat-dialog-content>
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  @if (isEditMode) {
+    <form [formGroup]="editForm" class="edit-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Code</mat-label>
+        <input matInput formControlName="code" />
+        @if (editForm.controls.code.hasError('required')) {
+          <mat-error>Code is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+        @if (editForm.controls.name.hasError('required')) {
+          <mat-error>Name is required</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  } @else {
+    <form [formGroup]="addForm">
+      <div class="rows-header">
+        <span class="col-label col-code">Code</span>
+        <span class="col-label col-name">Name</span>
+        <span class="col-action"></span>
+      </div>
+
+      <div formArrayName="rows">
+        @for (row of rows.controls; track $index; let i = $index) {
+          <div [formGroupName]="i" class="item-row">
+            <mat-form-field appearance="outline" class="field-code">
+              <input matInput formControlName="code" placeholder="e.g. KG" />
+              @if (rows.at(i).get('code')?.hasError('required') && rows.at(i).get('code')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field-name">
+              <input matInput formControlName="name" placeholder="e.g. Kilogram" />
+              @if (rows.at(i).get('name')?.hasError('required') && rows.at(i).get('name')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <button
+              mat-icon-button
+              type="button"
+              class="remove-btn"
+              [disabled]="rows.length === 1"
+              (click)="removeRow(i)"
+              matTooltip="Remove row"
+            >
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+      <button mat-button type="button" color="primary" class="add-row-btn" (click)="addRow()">
+        <mat-icon>add</mat-icon>
+        Add Another Row
+      </button>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="(isEditMode ? editForm.invalid : addForm.invalid) || isSaving()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Add' }}
+    }
+  </button>
+</mat-dialog-actions>

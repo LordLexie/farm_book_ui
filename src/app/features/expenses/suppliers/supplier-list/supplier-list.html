@@ -1,0 +1,88 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Suppliers</h1>
+    <p class="page-subtitle">Manage suppliers for the farm</p>
+  </div>
+  <button mat-flat-button color="primary" (click)="openAddDialog()">
+    <mat-icon>add</mat-icon>
+    Add Supplier
+  </button>
+</div>
+
+<div class="table-card">
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (suppliers().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">local_shipping</mat-icon>
+      <p>No suppliers found. Add a supplier to get started.</p>
+      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Supplier</button>
+    </div>
+  } @else {
+    <table mat-table [dataSource]="suppliers()" class="suppliers-table">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="code-chip">{{ item.code }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let item">
+          <span>{{ item.name }}</span>
+          @if (item.type === 'individual' && (item.first_name || item.last_name)) {
+            <span class="sub-text">{{ item.first_name }} {{ item.last_name }}</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="type-chip" [class.individual]="item.type === 'individual'" [class.organization]="item.type === 'organization'">
+            {{ item.type === 'individual' ? 'Individual' : 'Organization' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="contact">
+        <th mat-header-cell *matHeaderCellDef>Contact</th>
+        <td mat-cell *matCellDef="let item">
+          @if (item.email) {
+            <span class="contact-line">{{ item.email }}</span>
+          }
+          @if (item.phone) {
+            <span class="contact-line">{{ item.phone }}</span>
+          }
+          @if (!item.email && !item.phone) {
+            <span class="no-contact">—</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="status-chip" [class.active]="isActive(item)" [class.inactive]="!isActive(item)">
+            {{ item.status?.name ?? '—' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let item" class="actions-cell">
+          <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  }
+</div>

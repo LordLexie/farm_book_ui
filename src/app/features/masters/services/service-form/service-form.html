@@ -1,0 +1,157 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Service' : 'Add Services' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    @if (isEditMode) {
+      <!-- Edit mode: single service form -->
+      <form [formGroup]="editForm" class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+          @if (editForm.controls.name.hasError('required')) {
+            <mat-error>Name is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Service Type</mat-label>
+          <mat-select formControlName="service_type_id" (openedChange)="!$event && serviceTypeSearch.set('')">
+            <div class="select-search-wrapper">
+              <input
+                #typeSearchInput
+                class="select-search-input"
+                placeholder="Search types..."
+                autocomplete="off"
+                (input)="serviceTypeSearch.set(typeSearchInput.value)"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              />
+            </div>
+            @for (type of filteredServiceTypes(); track type.id) {
+              <mat-option [value]="type.id">{{ type.name }}</mat-option>
+            }
+          </mat-select>
+          @if (editForm.controls.service_type_id.hasError('required')) {
+            <mat-error>Service type is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Unit of Measure</mat-label>
+          <mat-select formControlName="unit_of_measure_id">
+            @for (uom of unitOfMeasures(); track uom.id) {
+              <mat-option [value]="uom.id">{{ uom.code }} — {{ uom.name }}</mat-option>
+            }
+          </mat-select>
+          @if (editForm.controls.unit_of_measure_id.hasError('required')) {
+            <mat-error>Unit of measure is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status_id">
+            @for (status of statuses(); track status.id) {
+              <mat-option [value]="status.id">{{ status.name }}</mat-option>
+            }
+          </mat-select>
+          @if (editForm.controls.status_id.hasError('required')) {
+            <mat-error>Status is required</mat-error>
+          }
+        </mat-form-field>
+      </form>
+    } @else {
+      <!-- Add mode: bulk rows -->
+      <form [formGroup]="addForm">
+        <div class="rows-header">
+          <span class="col-label col-name">Name</span>
+          <span class="col-label col-type">Type</span>
+          <span class="col-action"></span>
+        </div>
+
+        <div formArrayName="rows">
+          @for (row of rows.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="item-row">
+              <mat-form-field appearance="outline" class="field-name">
+                <input matInput formControlName="name" placeholder="Service name" />
+                @if (rows.at(i).get('name')?.hasError('required') && rows.at(i).get('name')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-type">
+                <mat-select formControlName="service_type_id" placeholder="Select type"
+                            (openedChange)="!$event && serviceTypeSearch.set('')">
+                  <div class="select-search-wrapper">
+                    <input
+                      #typeSearchInput
+                      class="select-search-input"
+                      placeholder="Search types..."
+                      autocomplete="off"
+                      (input)="serviceTypeSearch.set(typeSearchInput.value)"
+                      (click)="$event.stopPropagation()"
+                      (mousedown)="$event.stopPropagation()"
+                      (keydown)="$event.stopPropagation()"
+                    />
+                  </div>
+                  @for (type of filteredServiceTypes(); track type.id) {
+                    <mat-option [value]="type.id">{{ type.name }}</mat-option>
+                  }
+                </mat-select>
+                @if (rows.at(i).get('service_type_id')?.hasError('required') && rows.at(i).get('service_type_id')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <button
+                mat-icon-button
+                type="button"
+                class="remove-btn"
+                [disabled]="rows.length === 1"
+                (click)="removeRow(i)"
+                matTooltip="Remove row"
+              >
+                <mat-icon>remove_circle_outline</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <button mat-button type="button" color="primary" class="add-row-btn" (click)="addRow()">
+          <mat-icon>add</mat-icon>
+          Add Another Row
+        </button>
+      </form>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="(isEditMode ? editForm.invalid : addForm.invalid) || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Add Services' }}
+    }
+  </button>
+</mat-dialog-actions>

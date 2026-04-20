@@ -1,0 +1,166 @@
+<div class="analytics-container">
+  <h1 class="page-title">Milk Production</h1>
+  <p class="page-subtitle">Track daily output, trends, and animal performance</p>
+
+  <div class="stats-grid">
+    @if (isLoadingStats()) {
+      @for (i of [1,2,3,4,5]; track i) {
+        <mat-card class="stat-card stat-card--skeleton">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="skeleton-icon"></div>
+              <div class="stat-info">
+                <div class="skeleton-value"></div>
+                <div class="skeleton-label"></div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    } @else {
+      @for (stat of stats(); track stat.label) {
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" [style.background-color]="stat.color + '1a'">
+                <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <div class="section-label">Insights</div>
+
+  <div class="panels-grid">
+    <!-- Daily Production Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">show_chart</mat-icon>
+          <div>
+            <div class="panel-title">Daily Production Trend</div>
+            <div class="panel-subtitle">Last 30 days</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (dailyChartPoints().line === '') {
+          <div class="panel-empty"><span>No production data</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="dailyChartPoints().fill" class="chart-fill chart-fill--green"/>
+              <polyline [attr.points]="dailyChartPoints().line" class="chart-line chart-line--green"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of dailyChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Monthly Production Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">trending_up</mat-icon>
+          <div>
+            <div class="panel-title">Monthly Production Trend</div>
+            <div class="panel-subtitle">Last 6 months</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (monthlyChartPoints().line === '') {
+          <div class="panel-empty"><span>No production data</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="monthlyChartPoints().fill" class="chart-fill chart-fill--blue"/>
+              <polyline [attr.points]="monthlyChartPoints().line" class="chart-line chart-line--blue"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of monthlyChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Producing Animals -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">leaderboard</mat-icon>
+          <div>
+            <div class="panel-title">Top Producing Animals</div>
+            <div class="panel-subtitle">By volume this month</div>
+          </div>
+        </div>
+        @if (isLoadingPanels()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (topAnimalsData().length === 0) {
+          <div class="panel-empty"><span>No data yet</span></div>
+        } @else {
+          <div class="animal-list">
+            @for (animal of topAnimalsData(); track animal.code; let i = $index) {
+              <div class="animal-row">
+                <span class="animal-rank">{{ i + 1 }}</span>
+                <div class="animal-info">
+                  <span class="animal-name">{{ animal.name }}</span>
+                  <span class="animal-code">{{ animal.code }}</span>
+                </div>
+                <span class="animal-total">{{ animal.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }} L</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Production by Session -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">pie_chart</mat-icon>
+          <div>
+            <div class="panel-title">Production by Session</div>
+            <div class="panel-subtitle">Breakdown by session type</div>
+          </div>
+        </div>
+        @if (isLoadingPanels()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (bySessionData().length === 0) {
+          <div class="panel-empty"><span>No data yet</span></div>
+        } @else {
+          <div class="session-list">
+            @for (item of bySessionData(); track item.session) {
+              <div class="session-row">
+                <span class="session-name">{{ item.session }}</span>
+                <span class="session-total">{{ item.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }} L</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

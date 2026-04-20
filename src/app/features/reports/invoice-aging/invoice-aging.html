@@ -1,0 +1,167 @@
+<div class="analytics-container">
+  <h1 class="page-title">Invoice Aging</h1>
+  <p class="page-subtitle">Track outstanding balances and overdue invoices by age bucket</p>
+
+  <div class="stats-grid">
+    @if (isLoadingStats()) {
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <mat-card class="stat-card stat-card--skeleton">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="skeleton-icon"></div>
+              <div class="stat-info">
+                <div class="skeleton-value"></div>
+                <div class="skeleton-label"></div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    } @else {
+      @for (stat of stats(); track stat.label) {
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" [style.background-color]="stat.color + '1a'">
+                <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <div class="section-label">Insights</div>
+
+  <div class="panels-grid">
+    <!-- Aging Breakdown -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">bar_chart</mat-icon>
+          <div>
+            <div class="panel-title">Aging Breakdown</div>
+            <div class="panel-subtitle">Balance by age bucket</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (agingBucketsData().length === 0) {
+          <div class="panel-empty"><span>No outstanding invoices</span></div>
+        } @else {
+          <div class="bucket-list">
+            @for (bucket of agingBucketsData(); track bucket.bucket; let i = $index) {
+              <div class="bucket-row">
+                <span class="bucket-label">{{ bucket.bucket }}</span>
+                <div class="bucket-bar-wrap">
+                  <div
+                    class="bucket-bar"
+                    [style.background-color]="bucketColor(i)"
+                    [style.width.%]="bucket.total / bucketMaxTotal() * 100"
+                  ></div>
+                </div>
+                <span class="bucket-total">{{ bucket.total.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Overdue Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">trending_up</mat-icon>
+          <div>
+            <div class="panel-title">Overdue Trend</div>
+            <div class="panel-subtitle">Last 6 months</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (trendChartPoints().line === '') {
+          <div class="panel-empty"><span>No data yet</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="trendChartPoints().fill" class="chart-fill chart-fill--blue"/>
+              <polyline [attr.points]="trendChartPoints().line" class="chart-line chart-line--blue"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of trendChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Customers with Outstanding Balances -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">leaderboard</mat-icon>
+          <div>
+            <div class="panel-title">Top Overdue Customers</div>
+            <div class="panel-subtitle">By outstanding balance</div>
+          </div>
+        </div>
+        @if (isLoadingPanels()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (topCustomersData().length === 0) {
+          <div class="panel-empty"><span>No outstanding invoices</span></div>
+        } @else {
+          <div class="item-list">
+            @for (item of topCustomersData(); track item.name; let i = $index) {
+              <div class="item-row">
+                <span class="item-rank">{{ i + 1 }}</span>
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-total">{{ item.total.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Recent Overdue Invoices -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">receipt_long</mat-icon>
+          <div>
+            <div class="panel-title">Recent Overdue Invoices</div>
+            <div class="panel-subtitle">Oldest unpaid first</div>
+          </div>
+        </div>
+        @if (isLoadingPanels()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (recentOverdueData().length === 0) {
+          <div class="panel-empty"><span>No outstanding invoices</span></div>
+        } @else {
+          <div class="invoice-list">
+            @for (invoice of recentOverdueData(); track invoice.code) {
+              <div class="invoice-row">
+                <div class="invoice-info">
+                  <span class="invoice-customer">{{ invoice.customer }}</span>
+                  <span class="invoice-meta">{{ invoice.code }} &middot; {{ formatDate(invoice.date) }}</span>
+                </div>
+                <span class="invoice-balance">{{ invoice.balance.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

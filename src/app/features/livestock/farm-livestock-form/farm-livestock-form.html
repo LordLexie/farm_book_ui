@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Livestock' : 'Add Livestock' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="form" class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Farm</mat-label>
+        <mat-select formControlName="farm_id">
+          @for (f of farms(); track f.id) {
+            <mat-option [value]="f.id">{{ f.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.farm_id.hasError('required')) {
+          <mat-error>Farm is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="livestock_type_id">
+          @for (t of livestockTypes(); track t.id) {
+            <mat-option [value]="t.id">{{ t.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.livestock_type_id.hasError('required')) {
+          <mat-error>Type is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Gender</mat-label>
+        <mat-select formControlName="gender_id">
+          @for (g of genders(); track g.id) {
+            <mat-option [value]="g.id">{{ g.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.gender_id.hasError('required')) {
+          <mat-error>Gender is required</mat-error>
+        }
+      </mat-form-field>
+
+      @if (isEditMode) {
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status_id">
+            @for (s of statuses(); track s.id) {
+              <mat-option [value]="s.id">{{ s.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="Optional" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Breed</mat-label>
+        <input matInput formControlName="breed" placeholder="Optional" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date of Birth</mat-label>
+        <input matInput type="date" formControlName="date_of_birth" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="2" placeholder="Optional"></textarea>
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="form.invalid || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Add Livestock' }}
+    }
+  </button>
+</mat-dialog-actions>

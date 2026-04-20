@@ -1,0 +1,153 @@
+<h2 mat-dialog-title>New Quotation</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form [formGroup]="headerForm" class="header-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Customer</mat-label>
+        <mat-select formControlName="customer_id" (openedChange)="!$event && customerSearch.set('')">
+          <div class="select-search-wrapper">
+            <input
+              #customerSearchInput
+              class="select-search-input"
+              placeholder="Search customers..."
+              autocomplete="off"
+              (input)="customerSearch.set(customerSearchInput.value)"
+              (click)="$event.stopPropagation()"
+              (mousedown)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+            />
+          </div>
+          @for (c of filteredCustomers(); track c.id) {
+            <mat-option [value]="c.id">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+        @if (headerForm.controls.customer_id.hasError('required')) {
+          <mat-error>Customer is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="date" />
+        @if (headerForm.controls.date.hasError('required')) {
+          <mat-error>Date is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Valid Until</mat-label>
+        <input matInput type="date" formControlName="valid_until" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes" rows="2"></textarea>
+      </mat-form-field>
+    </form>
+
+    <div class="items-section">
+      <div class="items-header-row">
+        <span class="col-label col-name">Item Name</span>
+        <span class="col-label col-desc">Description</span>
+        <span class="col-label col-uom">Unit</span>
+        <span class="col-label col-qty">Qty</span>
+        <span class="col-label col-price">Unit Price</span>
+        <span class="col-label col-total">Total</span>
+        <span class="col-action"></span>
+      </div>
+
+      <form [formGroup]="itemsForm">
+        <div formArrayName="rows">
+          @for (row of rows.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="item-row">
+              <mat-form-field appearance="outline" class="col-name">
+                <input matInput formControlName="name" placeholder="Item name" />
+                @if (rows.at(i).get('name')?.hasError('required') && rows.at(i).get('name')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="col-desc">
+                <input matInput formControlName="description" placeholder="Optional" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="col-uom">
+                <mat-select formControlName="unit_of_measure_id" placeholder="Unit">
+                  @for (uom of unitOfMeasures(); track uom.id) {
+                    <mat-option [value]="uom.id">{{ uom.code }}</mat-option>
+                  }
+                </mat-select>
+                @if (rows.at(i).get('unit_of_measure_id')?.hasError('required') && rows.at(i).get('unit_of_measure_id')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="col-qty">
+                <input matInput type="number" formControlName="quantity" placeholder="0" min="0" />
+                @if (rows.at(i).get('quantity')?.hasError('required') && rows.at(i).get('quantity')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="col-price">
+                <input matInput type="number" formControlName="unit_price" placeholder="0.00" min="0" step="0.01" />
+                @if (rows.at(i).get('unit_price')?.hasError('required') && rows.at(i).get('unit_price')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <div class="col-total row-total">{{ rowTotal(i) | number:'1.2-2' }}</div>
+
+              <button
+                mat-icon-button
+                type="button"
+                class="remove-btn"
+                [disabled]="rows.length === 1"
+                (click)="removeRow(i)"
+                matTooltip="Remove row"
+              >
+                <mat-icon>remove_circle_outline</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </form>
+
+      <div class="items-footer">
+        <button mat-button type="button" color="primary" (click)="addRow()">
+          <mat-icon>add</mat-icon>
+          Add Line
+        </button>
+        <div class="total-display">
+          <span class="total-label">Total</span>
+          <span class="total-value">{{ computedTotal() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="headerForm.invalid || itemsForm.invalid || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      Create Quotation
+    }
+  </button>
+</mat-dialog-actions>

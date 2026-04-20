@@ -1,0 +1,104 @@
+<div class="view-page-header">
+  <button mat-icon-button (click)="router.navigate(['/sales/quotations'])" matTooltip="Back to quotations">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div class="view-page-title-wrap">
+    <h1 class="view-page-title">Quotation{{ quotation() ? ' ' + quotation()!.code : '' }}</h1>
+  </div>
+  @if (quotation()) {
+    <button mat-stroked-button (click)="print()" matTooltip="Open print view">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+    <button mat-stroked-button (click)="router.navigate(['/sales/quotations', quotation()!.id, 'edit'])">
+      <mat-icon>edit</mat-icon>
+      Edit
+    </button>
+  }
+</div>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+} @else if (quotation(); as q) {
+  <div class="view-card">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Customer</span>
+        <span class="detail-value">{{ q.customer?.name ?? '—' }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Date</span>
+        <span class="detail-value">{{ q.date | slice:0:10 }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Status</span>
+        <span class="status-chip" [class.active]="isActive()" [class.inactive]="!isActive()">
+          {{ q.status?.name ?? '—' }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Valid Until</span>
+        <span class="detail-value">{{ q.valid_until ? (q.valid_until | slice:0:10) : '—' }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Total</span>
+        <span class="detail-value total-value">{{ q.total | number:'1.2-2' }}</span>
+      </div>
+      @if (q.notes) {
+        <div class="detail-item full-width">
+          <span class="detail-label">Notes</span>
+          <span class="detail-value notes-value">{{ q.notes }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="view-card items-card">
+    <h2 class="items-card-title">Line Items</h2>
+    <table mat-table [dataSource]="q.items" class="items-table">
+      <ng-container matColumnDef="num">
+        <th mat-header-cell *matHeaderCellDef>#</th>
+        <td mat-cell *matCellDef="let item; let i = index">{{ i + 1 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Item</th>
+        <td mat-cell *matCellDef="let item">
+          <div class="item-name">{{ item.name }}</div>
+          @if (item.description) {
+            <div class="item-desc">{{ item.description }}</div>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="qty">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Qty</th>
+        <td mat-cell *matCellDef="let item" class="col-right">{{ item.quantity | number }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="unit">
+        <th mat-header-cell *matHeaderCellDef>Unit</th>
+        <td mat-cell *matCellDef="let item">{{ item.unit_of_measure?.code ?? '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="unit_price">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Unit Price</th>
+        <td mat-cell *matCellDef="let item" class="col-right">{{ item.unit_price | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Total</th>
+        <td mat-cell *matCellDef="let item" class="col-right">
+          <strong>{{ (item.quantity * item.unit_price) | number:'1.2-2' }}</strong>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: itemColumns"></tr>
+    </table>
+  </div>
+}

@@ -1,0 +1,136 @@
+<div class="analytics-container">
+  <h1 class="page-title">Sales Analytics</h1>
+  <p class="page-subtitle">Track revenue, customers, and sales performance</p>
+
+  <div class="stats-grid">
+    @if (isLoadingStats()) {
+      @for (i of [1,2,3,4,5]; track i) {
+        <mat-card class="stat-card stat-card--skeleton">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="skeleton-icon"></div>
+              <div class="stat-info">
+                <div class="skeleton-value"></div>
+                <div class="skeleton-label"></div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    } @else {
+      @for (stat of stats(); track stat.label) {
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" [style.background-color]="stat.color + '1a'">
+                <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <div class="section-label">Insights</div>
+
+  <div class="panels-grid">
+    <!-- Revenue Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">show_chart</mat-icon>
+          <div>
+            <div class="panel-title">Revenue Trend</div>
+            <div class="panel-subtitle">Last 6 months</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (revenueChartPoints().line === '') {
+          <div class="panel-empty"><span>No revenue data</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="revenueChartPoints().fill" class="chart-fill chart-fill--green"/>
+              <polyline [attr.points]="revenueChartPoints().line" class="chart-line chart-line--green"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of revenueChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Milk Sales Trend -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">water_drop</mat-icon>
+          <div>
+            <div class="panel-title">Milk Sales Trend</div>
+            <div class="panel-subtitle">Last 6 months</div>
+          </div>
+        </div>
+        @if (isLoadingCharts()) {
+          <div class="chart-loading"><mat-spinner diameter="24"/></div>
+        } @else if (milkSalesChartPoints().line === '') {
+          <div class="panel-empty"><span>No milk sales data</span></div>
+        } @else {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 500 100" class="chart-svg" aria-hidden="true">
+              <line x1="0" y1="20" x2="500" y2="20" class="chart-grid"/>
+              <line x1="0" y1="55" x2="500" y2="55" class="chart-grid"/>
+              <line x1="0" y1="90" x2="500" y2="90" class="chart-grid"/>
+              <polygon [attr.points]="milkSalesChartPoints().fill" class="chart-fill chart-fill--blue"/>
+              <polyline [attr.points]="milkSalesChartPoints().line" class="chart-line chart-line--blue"/>
+            </svg>
+            <div class="chart-labels">
+              @for (label of milkSalesChartPoints().labels; track label) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Customers -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">leaderboard</mat-icon>
+          <div>
+            <div class="panel-title">Top Customers</div>
+            <div class="panel-subtitle">By revenue this month</div>
+          </div>
+        </div>
+        <div class="panel-empty"><span>No data yet</span></div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Invoice Status Breakdown -->
+    <mat-card class="panel-card">
+      <mat-card-content>
+        <div class="panel-header">
+          <mat-icon class="panel-icon">pie_chart</mat-icon>
+          <div>
+            <div class="panel-title">Invoice Status Breakdown</div>
+            <div class="panel-subtitle">Paid vs outstanding vs overdue</div>
+          </div>
+        </div>
+        <div class="panel-empty"><span>No data yet</span></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

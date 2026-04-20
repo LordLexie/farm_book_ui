@@ -1,0 +1,95 @@
+.loading-options {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+  min-width: 560px;
+}
+
+.error-banner {
+  background: #fdecea;
+  color: #c62828;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* Edit mode grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  padding-top: 8px;
+  min-width: 460px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Bulk add rows */
+.rows-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 4px;
+  min-width: 640px;
+}
+
+.col-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.54);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.col-name {
+  flex: 2;
+}
+
+.col-type {
+  flex: 1.5;
+}
+
+.col-status {
+  flex: 1;
+}
+
+.col-action {
+  flex: 0 0 40px;
+}
+
+.item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+  min-width: 640px;
+}
+
+.field-name {
+  flex: 2;
+}
+
+.field-type {
+  flex: 1.5;
+}
+
+.field-status {
+  flex: 1;
+}
+
+.remove-btn {
+  margin-top: 8px;
+  flex: 0 0 40px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.add-row-btn {
+  margin-top: 4px;
+}
+
+mat-spinner {
+  display: inline-flex;
+}

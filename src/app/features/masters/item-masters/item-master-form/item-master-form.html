@@ -1,0 +1,158 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Item Master' : 'Add Item Masters' }}</h2>
+
+<mat-dialog-content>
+  @if (isLoadingOptions()) {
+    <div class="loading-options">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else {
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    @if (isEditMode) {
+      <form [formGroup]="editForm" class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. Cattle Feed" />
+          @if (editForm.controls.name.hasError('required')) {
+            <mat-error>Name is required</mat-error>
+          }
+          @if (editForm.controls.name.hasError('maxlength')) {
+            <mat-error>Name must be 255 characters or fewer</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Item Category</mat-label>
+          <mat-select formControlName="item_category_id" (openedChange)="!$event && categorySearch.set('')">
+            <div class="select-search-wrapper">
+              <input
+                #categorySearchInput
+                class="select-search-input"
+                placeholder="Search categories..."
+                autocomplete="off"
+                (input)="categorySearch.set(categorySearchInput.value)"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              />
+            </div>
+            @for (cat of filteredCategories(); track cat.id) {
+              <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+            }
+          </mat-select>
+          @if (editForm.controls.item_category_id.hasError('required')) {
+            <mat-error>Item category is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Unit of Measure</mat-label>
+          <mat-select formControlName="unit_of_measure_id">
+            @for (uom of unitsOfMeasure(); track uom.id) {
+              <mat-option [value]="uom.id">{{ uom.name }} ({{ uom.code }})</mat-option>
+            }
+          </mat-select>
+          @if (editForm.controls.unit_of_measure_id.hasError('required')) {
+            <mat-error>Unit of measure is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3" placeholder="Optional description"></textarea>
+        </mat-form-field>
+      </form>
+    } @else {
+      <form [formGroup]="addForm">
+        <div class="rows-header">
+          <span class="col-label col-name">Name</span>
+          <span class="col-label col-category">Category</span>
+          <span class="col-label col-uom">Unit</span>
+          <span class="col-action"></span>
+        </div>
+
+        <div formArrayName="rows">
+          @for (row of rows.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="item-row">
+              <mat-form-field appearance="outline" class="field-name">
+                <input matInput formControlName="name" placeholder="e.g. Cattle Feed" />
+                @if (rows.at(i).get('name')?.hasError('required') && rows.at(i).get('name')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-category">
+                <mat-select formControlName="item_category_id" placeholder="Category"
+                            (openedChange)="!$event && categorySearch.set('')">
+                  <div class="select-search-wrapper">
+                    <input
+                      #categorySearchInput
+                      class="select-search-input"
+                      placeholder="Search categories..."
+                      autocomplete="off"
+                      (input)="categorySearch.set(categorySearchInput.value)"
+                      (click)="$event.stopPropagation()"
+                      (mousedown)="$event.stopPropagation()"
+                      (keydown)="$event.stopPropagation()"
+                    />
+                  </div>
+                  @for (cat of filteredCategories(); track cat.id) {
+                    <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+                  }
+                </mat-select>
+                @if (rows.at(i).get('item_category_id')?.hasError('required') && rows.at(i).get('item_category_id')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field-uom">
+                <mat-select formControlName="unit_of_measure_id" placeholder="Unit">
+                  @for (uom of unitsOfMeasure(); track uom.id) {
+                    <mat-option [value]="uom.id">{{ uom.name }} ({{ uom.code }})</mat-option>
+                  }
+                </mat-select>
+                @if (rows.at(i).get('unit_of_measure_id')?.hasError('required') && rows.at(i).get('unit_of_measure_id')?.touched) {
+                  <mat-error>Required</mat-error>
+                }
+              </mat-form-field>
+
+              <button
+                mat-icon-button
+                type="button"
+                class="remove-btn"
+                [disabled]="rows.length === 1"
+                (click)="removeRow(i)"
+                matTooltip="Remove row"
+              >
+                <mat-icon>remove_circle_outline</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <button mat-button type="button" color="primary" class="add-row-btn" (click)="addRow()">
+          <mat-icon>add</mat-icon>
+          Add Another Row
+        </button>
+      </form>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="(isEditMode ? editForm.invalid : addForm.invalid) || isSaving() || isLoadingOptions()"
+    (click)="submit()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      {{ isEditMode ? 'Save Changes' : 'Add Items' }}
+    }
+  </button>
+</mat-dialog-actions>

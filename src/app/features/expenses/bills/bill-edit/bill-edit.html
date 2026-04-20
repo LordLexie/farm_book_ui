@@ -1,0 +1,193 @@
+<div class="edit-page-header">
+  <button mat-icon-button (click)="router.navigate(['/expenses/bills', bill()?.id])" matTooltip="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div class="edit-page-title-wrap">
+    <h1 class="edit-page-title">Edit Bill{{ bill() ? ' ' + bill()!.code : '' }}</h1>
+  </div>
+</div>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="40" />
+  </div>
+} @else {
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+
+  <div class="edit-card">
+    <form [formGroup]="headerForm" class="header-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Supplier</mat-label>
+        <mat-select formControlName="supplier_id" (openedChange)="!$event && supplierSearch.set('')">
+          <div class="select-search-wrapper">
+            <input
+              #supplierSearchInput
+              class="select-search-input"
+              placeholder="Search suppliers..."
+              autocomplete="off"
+              (input)="supplierSearch.set(supplierSearchInput.value)"
+              (click)="$event.stopPropagation()"
+              (mousedown)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+            />
+          </div>
+          @for (s of filteredSuppliers(); track s.id) {
+            <mat-option [value]="s.id">{{ s.name }}</mat-option>
+          }
+        </mat-select>
+        @if (headerForm.controls.supplier_id.hasError('required')) {
+          <mat-error>Supplier is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="date" />
+        @if (headerForm.controls.date.hasError('required')) {
+          <mat-error>Date is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status_id">
+          @for (s of statuses(); track s.id) {
+            <mat-option [value]="s.id">{{ s.name }}</mat-option>
+          }
+        </mat-select>
+        @if (headerForm.controls.status_id.hasError('required')) {
+          <mat-error>Status is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Currency</mat-label>
+        <mat-select formControlName="currency_id">
+          @for (c of currencies(); track c.id) {
+            <mat-option [value]="c.id">{{ c.code }} — {{ c.name }}</mat-option>
+          }
+        </mat-select>
+        @if (headerForm.controls.currency_id.hasError('required')) {
+          <mat-error>Currency is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes" rows="2"></textarea>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <div class="edit-card items-card">
+    <h2 class="items-card-title">Line Items</h2>
+
+    <div class="items-header-row">
+      <span class="col-label col-service">Service</span>
+      <span class="col-label col-uom">Unit</span>
+      <span class="col-label col-qty">Qty</span>
+      <span class="col-label col-price">Unit Price</span>
+      <span class="col-label col-total">Total</span>
+      <span class="col-action"></span>
+    </div>
+
+    <form [formGroup]="itemsForm">
+      <div formArrayName="rows">
+        @for (row of rows.controls; track $index; let i = $index) {
+          <div [formGroupName]="i" class="item-row">
+            <mat-form-field appearance="outline" class="col-service">
+              <mat-select formControlName="service_id" placeholder="Select service"
+                          (openedChange)="!$event && serviceSearch.set('')">
+                <div class="select-search-wrapper">
+                  <input
+                    #serviceSearchInput
+                    class="select-search-input"
+                    placeholder="Search services..."
+                    autocomplete="off"
+                    (input)="serviceSearch.set(serviceSearchInput.value)"
+                    (click)="$event.stopPropagation()"
+                    (mousedown)="$event.stopPropagation()"
+                    (keydown)="$event.stopPropagation()"
+                  />
+                </div>
+                @for (svc of filteredServices(); track svc.id) {
+                  <mat-option [value]="svc.id">{{ svc.name }}</mat-option>
+                }
+              </mat-select>
+              @if (rows.at(i).get('service_id')?.hasError('required') && rows.at(i).get('service_id')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-uom">
+              <mat-select formControlName="unit_of_measure_id" placeholder="Unit">
+                @for (uom of unitOfMeasures(); track uom.id) {
+                  <mat-option [value]="uom.id">{{ uom.code }}</mat-option>
+                }
+              </mat-select>
+              @if (rows.at(i).get('unit_of_measure_id')?.hasError('required') && rows.at(i).get('unit_of_measure_id')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-qty">
+              <input matInput type="number" formControlName="quantity" placeholder="0" min="0" />
+              @if (rows.at(i).get('quantity')?.hasError('required') && rows.at(i).get('quantity')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-price">
+              <input matInput type="number" formControlName="unit_price" placeholder="0.00" min="0" step="0.01" />
+              @if (rows.at(i).get('unit_price')?.hasError('required') && rows.at(i).get('unit_price')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <div class="col-total row-total">{{ rowTotal(i) | number:'1.2-2' }}</div>
+
+            <button
+              mat-icon-button
+              type="button"
+              class="remove-btn"
+              [disabled]="rows.length === 1"
+              (click)="removeRow(i)"
+              matTooltip="Remove row"
+            >
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </form>
+
+    <div class="items-footer">
+      <button mat-button type="button" color="primary" (click)="addRow()">
+        <mat-icon>add</mat-icon>
+        Add Line
+      </button>
+      <div class="total-display">
+        <span class="total-label">Total</span>
+        <span class="total-value">{{ computedTotal() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions-row">
+    <button mat-button (click)="router.navigate(['/expenses/bills', bill()?.id])">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="headerForm.invalid || itemsForm.invalid || isSaving()"
+      (click)="submit()"
+    >
+      @if (isSaving()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        Save Changes
+      }
+    </button>
+  </div>
+}
