@@ -16,6 +16,7 @@ import {
   FarmConsumptionFormComponent,
   FarmConsumptionFormResult,
 } from '../farm-consumption-form/farm-consumption-form';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-farm-consumption-list',
@@ -36,6 +37,7 @@ export class FarmConsumptionListComponent implements OnInit {
   private readonly consumptionService = inject(FarmConsumptionService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly consumptions = signal<FarmConsumption[]>([]);

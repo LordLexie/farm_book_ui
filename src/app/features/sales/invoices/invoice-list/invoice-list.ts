@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Invoice, InvoiceService } from '../../../../core/services/invoice.service';
 import { InvoiceFormComponent, InvoiceFormResult } from '../invoice-form/invoice-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-invoice-list',
@@ -23,6 +24,7 @@ export class InvoiceListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   protected readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly invoices = signal<Invoice[]>([]);

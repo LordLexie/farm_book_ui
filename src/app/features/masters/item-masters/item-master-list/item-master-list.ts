@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { ItemMaster, ItemMasterService } from '../../../../core/services/item-master.service';
 import { ItemMasterFormComponent, ItemMasterFormResult } from '../item-master-form/item-master-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-item-master-list',
@@ -29,6 +30,7 @@ export class ItemMasterListComponent implements OnInit {
   private readonly service = inject(ItemMasterService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly itemMasters = signal<ItemMaster[]>([]);

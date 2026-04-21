@@ -49,6 +49,10 @@
         <span class="detail-value">{{ inv.discount }}%</span>
       </div>
       <div class="detail-item">
+        <span class="detail-label">Tax</span>
+        <span class="detail-value">{{ inv.tax ? inv.tax.name + ' (' + inv.tax.value + '%)' : 'No Tax' }}</span>
+      </div>
+      <div class="detail-item">
         <span class="detail-label">Total</span>
         <span class="detail-value total-value">{{ inv.total | number:'1.2-2' }}</span>
       </div>

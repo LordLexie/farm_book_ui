@@ -13,6 +13,7 @@ import {
   FarmLivestockFormComponent,
   FarmLivestockFormResult,
 } from '../farm-livestock-form/farm-livestock-form';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-farm-livestock-list',
@@ -32,6 +33,7 @@ export class FarmLivestockListComponent implements OnInit {
   private readonly livestockService = inject(FarmLivestockService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly livestocks = signal<FarmLivestock[]>([]);

@@ -23,12 +23,10 @@
   text-align: center;
 }
 
-.farm-icon {
-  font-size: 56px;
-  width: 56px;
-  height: 56px;
-  color: #1b6b5a;
-  margin-bottom: 8px;
+.login-logo {
+  height: 100px;
+  width: auto;
+  margin-bottom: 12px;
 }
 
 mat-card-title {

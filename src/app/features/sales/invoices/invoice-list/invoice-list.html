@@ -3,10 +3,12 @@
     <h1 class="page-title">Invoices</h1>
     <p class="page-subtitle">Create and manage customer invoices</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    New Invoice
-  </button>
+  @if (auth.hasPermission('manage invoices')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      New Invoice
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">description</mat-icon>
       <p>No invoices yet.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">New Invoice</button>
+      @if (auth.hasPermission('manage invoices')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">New Invoice</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="invoices()" class="data-table">

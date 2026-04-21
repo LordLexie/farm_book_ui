@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Customer, CustomerService } from '../../../../core/services/customer.service';
 import { CustomerFormComponent, CustomerFormResult } from '../customer-form/customer-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-customer-list',
@@ -21,6 +22,7 @@ export class CustomerListComponent implements OnInit {
   private readonly customerService = inject(CustomerService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly customers = signal<Customer[]>([]);

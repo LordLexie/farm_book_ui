@@ -46,6 +46,13 @@ export interface InvoiceUnitOfMeasure {
   name: string;
 }
 
+export interface InvoiceTax {
+  id: number;
+  code: string;
+  name: string;
+  value: number;
+}
+
 export interface InvoiceItem {
   id: number;
   invoiceable_type: 'farm_item' | 'service';
@@ -64,6 +71,7 @@ export interface Invoice {
   customer_id: number;
   status_id: number;
   currency_id: number;
+  tax_id: number | null;
   date: string;
   discount: number;
   total: number;
@@ -72,6 +80,7 @@ export interface Invoice {
   customer: InvoiceCustomer | null;
   status: InvoiceStatus | null;
   currency: InvoiceCurrency | null;
+  tax: InvoiceTax | null;
   items: InvoiceItem[];
 }
 
@@ -87,6 +96,7 @@ export interface StoreInvoicePayload {
   customer_id: number;
   status_id?: number;
   currency_id: number;
+  tax_id?: number | null;
   date: string;
   discount?: number;
   items: InvoiceItemPayload[];
@@ -96,6 +106,7 @@ export interface UpdateInvoicePayload {
   customer_id?: number;
   status_id?: number;
   currency_id?: number;
+  tax_id?: number | null;
   date?: string;
   discount?: number;
   items?: InvoiceItemPayload[];
@@ -151,6 +162,10 @@ export class InvoiceService {
 
   getUnitOfMeasures(): Observable<{ unit_of_measures: InvoiceUnitOfMeasure[] }> {
     return this.http.get<{ unit_of_measures: InvoiceUnitOfMeasure[] }>('/api/v1/unit-of-measures');
+  }
+
+  getTaxes(): Observable<{ taxes: InvoiceTax[] }> {
+    return this.http.get<{ taxes: InvoiceTax[] }>('/api/v1/taxes');
   }
 
   getPrintUrl(id: number): Observable<{ url: string }> {

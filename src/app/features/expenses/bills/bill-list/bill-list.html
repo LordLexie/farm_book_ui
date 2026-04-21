@@ -3,10 +3,12 @@
     <h1 class="page-title">Bills</h1>
     <p class="page-subtitle">Record and manage farm service bills</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Record Bill
-  </button>
+  @if (auth.hasPermission('manage bills')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Record Bill
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">receipt</mat-icon>
       <p>No bills recorded yet.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Record Bill</button>
+      @if (auth.hasPermission('manage bills')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Record Bill</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="bills()" class="data-table">

@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Permission, PermissionService } from '../../../../core/services/permission.service';
 import { PermissionFormComponent } from '../permission-form/permission-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-permission-list',
@@ -27,6 +28,7 @@ export class PermissionListComponent implements OnInit {
   private readonly service = inject(PermissionService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly permissions = signal<Permission[]>([]);

@@ -3,10 +3,12 @@
     <h1 class="page-title">Milk Rates</h1>
     <p class="page-subtitle">Manage per-litre milk prices by rate plan</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add Rate
-  </button>
+  @if (auth.hasPermission('manage farms')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Rate
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">price_change</mat-icon>
       <p>No milk rates found. Add your first rate to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Rate</button>
+      @if (auth.hasPermission('manage farms')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Rate</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="milkRates()" class="milk-rates-table">
@@ -40,9 +44,11 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let rate" class="actions-cell">
-          <button mat-icon-button (click)="openEditDialog(rate)" matTooltip="Edit">
-            <mat-icon>edit</mat-icon>
-          </button>
+          @if (auth.hasPermission('manage farms')) {
+            <button mat-icon-button (click)="openEditDialog(rate)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

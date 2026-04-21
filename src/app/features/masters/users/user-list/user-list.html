@@ -3,10 +3,12 @@
     <h1 class="page-title">Users</h1>
     <p class="page-subtitle">Manage user accounts and their roles</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add User
-  </button>
+  @if (auth.hasPermission('manage users')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add User
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">people</mat-icon>
       <p>No users found. Add your first user to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add User</button>
+      @if (auth.hasPermission('manage users')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add User</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="users()" class="data-table">

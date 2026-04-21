@@ -3,10 +3,12 @@
     <h1 class="page-title">Farms</h1>
     <p class="page-subtitle">Manage farm locations</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add Farm
-  </button>
+  @if (auth.hasPermission('manage farms')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Farm
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">agriculture</mat-icon>
       <p>No farms found. Add your first farm to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Farm</button>
+      @if (auth.hasPermission('manage farms')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Farm</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="farms()" class="farms-table">
@@ -57,9 +61,11 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let farm" class="actions-cell">
-          <button mat-icon-button (click)="openEditDialog(farm)" matTooltip="Edit">
-            <mat-icon>edit</mat-icon>
-          </button>
+          @if (auth.hasPermission('manage farms')) {
+            <button mat-icon-button (click)="openEditDialog(farm)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

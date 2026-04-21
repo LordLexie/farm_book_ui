@@ -13,6 +13,7 @@ import {
   MilkProductionFormComponent,
   MilkProductionFormResult,
 } from '../milk-production-form/milk-production-form';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-milk-production-list',
@@ -33,6 +34,7 @@ export class MilkProductionListComponent implements OnInit {
   private readonly milkProductionService = inject(MilkProductionService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly milkProductions = signal<MilkProduction[]>([]);

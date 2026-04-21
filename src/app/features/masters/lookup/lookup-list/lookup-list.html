@@ -3,10 +3,12 @@
     <h1 class="page-title">{{ config.title }}</h1>
     <p class="page-subtitle">{{ config.subtitle }}</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add
-  </button>
+  @if (auth.hasPermission('manage farms')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">{{ config.icon }}</mat-icon>
       <p>No {{ config.title.toLowerCase() }} found.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add</button>
+      @if (auth.hasPermission('manage farms')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="items()" class="lookup-table">
@@ -37,9 +41,11 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let item" class="actions-cell">
-          <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
-            <mat-icon>edit</mat-icon>
-          </button>
+          @if (auth.hasPermission('manage farms')) {
+            <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

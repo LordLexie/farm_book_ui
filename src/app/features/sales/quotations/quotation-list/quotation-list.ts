@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Quotation, QuotationService } from '../../../../core/services/quotation.service';
 import { QuotationFormComponent, QuotationFormResult } from '../quotation-form/quotation-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-quotation-list',
@@ -23,6 +24,7 @@ export class QuotationListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly quotations = signal<Quotation[]>([]);

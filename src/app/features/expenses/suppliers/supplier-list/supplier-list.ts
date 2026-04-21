@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Supplier, SupplierService } from '../../../../core/services/supplier.service';
 import { SupplierFormComponent, SupplierFormResult } from '../supplier-form/supplier-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-supplier-list',
@@ -19,6 +20,7 @@ export class SupplierListComponent implements OnInit {
   private readonly supplierService = inject(SupplierService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly suppliers = signal<Supplier[]>([]);

@@ -3,10 +3,12 @@
     <h1 class="page-title">Quotations</h1>
     <p class="page-subtitle">Create and manage customer quotations</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    New Quotation
-  </button>
+  @if (auth.hasPermission('manage quotations')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      New Quotation
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">request_quote</mat-icon>
       <p>No quotations yet.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">New Quotation</button>
+      @if (auth.hasPermission('manage quotations')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">New Quotation</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="quotations()" class="data-table">

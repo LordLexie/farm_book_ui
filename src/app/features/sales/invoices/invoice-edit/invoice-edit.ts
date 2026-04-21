@@ -19,6 +19,7 @@ import {
   InvoiceService as InvoiceServiceType,
   InvoiceService,
   InvoiceStatus,
+  InvoiceTax,
   InvoiceUnitOfMeasure,
   UpdateInvoicePayload,
 } from '../../../../core/services/invoice.service';
@@ -53,10 +54,12 @@ export class InvoiceEditComponent implements OnInit {
   protected readonly customers = signal<InvoiceCustomer[]>([]);
   protected readonly statuses = signal<InvoiceStatus[]>([]);
   protected readonly currencies = signal<InvoiceCurrency[]>([]);
+  protected readonly taxes = signal<InvoiceTax[]>([]);
   protected readonly farmItems = signal<InvoiceFarmItem[]>([]);
   protected readonly services = signal<InvoiceServiceType[]>([]);
   protected readonly unitOfMeasures = signal<InvoiceUnitOfMeasure[]>([]);
   protected readonly subtotal = signal(0);
+  protected readonly taxAmount = signal(0);
   protected readonly computedTotal = signal(0);
   protected readonly customerSearch = signal('');
   protected readonly filteredCustomers = computed(() => {
@@ -68,6 +71,7 @@ export class InvoiceEditComponent implements OnInit {
     customer_id: ['' as unknown as number, [Validators.required]],
     status_id: ['' as unknown as number],
     currency_id: ['' as unknown as number, [Validators.required]],
+    tax_id: [null as number | null],
     date: ['', [Validators.required]],
     discount: [0, [Validators.min(0), Validators.max(100)]],
   });
@@ -104,15 +108,17 @@ export class InvoiceEditComponent implements OnInit {
       customers: this.invoiceService.getCustomers(),
       statuses: this.invoiceService.getStatuses(),
       currencies: this.invoiceService.getCurrencies(),
+      taxes: this.invoiceService.getTaxes(),
       farmItems: this.invoiceService.getFarmItems(),
       services: this.invoiceService.getServices(),
       unitOfMeasures: this.invoiceService.getUnitOfMeasures(),
     }).subscribe({
-      next: ({ invoice, customers, statuses, currencies, farmItems, services, unitOfMeasures }) => {
+      next: ({ invoice, customers, statuses, currencies, taxes, farmItems, services, unitOfMeasures }) => {
         this.invoice.set(invoice.invoice);
         this.customers.set(customers.customers);
         this.statuses.set(statuses.statuses);
         this.currencies.set(currencies.currencies);
+        this.taxes.set(taxes.taxes);
         this.farmItems.set(farmItems.farm_items);
         this.services.set(services.services);
         this.unitOfMeasures.set(unitOfMeasures.unit_of_measures);
@@ -122,6 +128,7 @@ export class InvoiceEditComponent implements OnInit {
           customer_id: inv.customer_id,
           status_id: inv.status_id,
           currency_id: inv.currency_id,
+          tax_id: inv.tax_id ?? null,
           date: inv.date.substring(0, 10),
           discount: inv.discount,
         });
@@ -142,6 +149,7 @@ export class InvoiceEditComponent implements OnInit {
 
     this.itemsForm.valueChanges.subscribe(() => this.recomputeTotal());
     this.headerForm.controls.discount.valueChanges.subscribe(() => this.recomputeTotal());
+    this.headerForm.controls.tax_id.valueChanges.subscribe(() => this.recomputeTotal());
   }
 
   private recomputeTotal(): void {
@@ -150,8 +158,13 @@ export class InvoiceEditComponent implements OnInit {
       0,
     );
     this.subtotal.set(subtotalVal);
-    const discount = this.headerForm.controls.discount.value ?? 0;
-    this.computedTotal.set(subtotalVal * (1 - discount / 100));
+    const discount      = this.headerForm.controls.discount.value ?? 0;
+    const afterDiscount = subtotalVal * (1 - discount / 100);
+    const taxId         = this.headerForm.controls.tax_id.value;
+    const tax           = this.taxes().find((t) => t.id === taxId);
+    const taxAmt        = tax ? afterDiscount * (tax.value / 100) : 0;
+    this.taxAmount.set(taxAmt);
+    this.computedTotal.set(afterDiscount + taxAmt);
   }
 
   protected getRowType(index: number): 'farm_item' | 'service' | '' {
@@ -208,6 +221,7 @@ export class InvoiceEditComponent implements OnInit {
       customer_id: v.customer_id,
       status_id: v.status_id,
       currency_id: v.currency_id,
+      tax_id: v.tax_id,
       date: v.date,
       discount: v.discount,
       items: this.rows.getRawValue().map((r) => ({

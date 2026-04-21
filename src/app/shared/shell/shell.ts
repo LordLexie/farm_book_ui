@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -23,14 +25,35 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './shell.css',
 })
 export class ShellComponent {
-  private readonly auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
+  protected isMobile = signal(false);
+  protected sidenavOpen = signal(true);
 
   protected mastersOpen = false;
   protected expensesOpen = false;
   protected salesOpen = false;
   protected reportsOpen = false;
   protected accessControlOpen = false;
+
+  constructor() {
+    inject(BreakpointObserver)
+      .observe(['(max-width: 768px)'])
+      .pipe(takeUntilDestroyed())
+      .subscribe(result => {
+        this.isMobile.set(result.matches);
+        this.sidenavOpen.set(!result.matches);
+      });
+  }
+
+  protected toggleSidenav(): void {
+    this.sidenavOpen.set(!this.sidenavOpen());
+  }
+
+  protected closeOnMobile(): void {
+    if (this.isMobile()) this.sidenavOpen.set(false);
+  }
 
   protected toggleMasters(): void {
     this.mastersOpen = !this.mastersOpen;

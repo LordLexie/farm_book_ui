@@ -24,7 +24,7 @@ export interface BillService {
   id: number;
   code: string;
   name: string;
-  unit_of_measure_id: number;
+  unit_of_measure_id: number | null;
 }
 
 export interface UnitOfMeasure {

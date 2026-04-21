@@ -1,0 +1,135 @@
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+  margin: 0;
+}
+
+.summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.summary-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #1b6b5a;
+}
+
+.summary-dot {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 64px 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  color: rgba(0, 0, 0, 0.4);
+  gap: 12px;
+}
+
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.empty-state p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.code-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(27, 107, 90, 0.1);
+  color: #1b6b5a;
+  white-space: nowrap;
+}
+
+.doc-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.doc-desc {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  margin-top: 2px;
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.type-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.type-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.type-label {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.col-right {
+  text-align: right !important;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}

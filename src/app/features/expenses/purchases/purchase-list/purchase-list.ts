@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Purchase, PurchaseService } from '../../../../core/services/purchase.service';
 import { PurchaseFormComponent, PurchaseFormResult } from '../purchase-form/purchase-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-purchase-list',
@@ -23,6 +24,7 @@ export class PurchaseListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   protected readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly purchases = signal<Purchase[]>([]);

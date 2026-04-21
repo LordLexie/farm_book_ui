@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LookupConfig, LookupItem, LookupService } from '../../../../core/services/lookup.service';
 import { LookupFormComponent, LookupFormResult } from '../lookup-form/lookup-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-lookup-list',
@@ -29,6 +30,7 @@ export class LookupListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly route = inject(ActivatedRoute);
+  protected readonly auth = inject(AuthService);
 
   protected readonly config = this.route.snapshot.data as LookupConfig;
   protected readonly isLoading = signal(true);

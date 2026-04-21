@@ -1,0 +1,106 @@
+<div class="view-page-header">
+  <button mat-icon-button (click)="router.navigate(['/sales/pro-forma-invoices'])" matTooltip="Back to pro forma invoices">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div class="view-page-title-wrap">
+    <h1 class="view-page-title">Pro Forma{{ proFormaInvoice() ? ' ' + proFormaInvoice()!.code : '' }}</h1>
+  </div>
+  @if (proFormaInvoice()) {
+    <button mat-stroked-button (click)="print()" matTooltip="Open print view">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+    <button mat-stroked-button (click)="router.navigate(['/sales/pro-forma-invoices', proFormaInvoice()!.id, 'edit'])">
+      <mat-icon>edit</mat-icon>
+      Edit
+    </button>
+    <button mat-flat-button color="primary" [disabled]="isConverting()" (click)="convert()">
+      @if (isConverting()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        <mat-icon>swap_horiz</mat-icon>
+      }
+      {{ isConverting() ? '' : 'Convert to Invoice' }}
+    </button>
+  }
+</div>
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="40" />
+  </div>
+} @else if (errorMessage()) {
+  <div class="error-banner">{{ errorMessage() }}</div>
+} @else if (proFormaInvoice(); as pf) {
+  <div class="view-card">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-label">Customer</span>
+        <span class="detail-value">{{ pf.customer?.name ?? '—' }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Date</span>
+        <span class="detail-value">{{ pf.date | slice:0:10 }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Status</span>
+        <span class="status-chip" [class.active]="isActive()" [class.inactive]="!isActive()">
+          {{ pf.status?.name ?? '—' }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Currency</span>
+        <span class="detail-value">{{ pf.currency?.code }} — {{ pf.currency?.name }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Discount</span>
+        <span class="detail-value">{{ pf.discount }}%</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Tax</span>
+        <span class="detail-value">{{ pf.tax ? pf.tax.name + ' (' + pf.tax.value + '%)' : 'No Tax' }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Total</span>
+        <span class="detail-value total-value">{{ pf.total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-card items-card">
+    <h2 class="items-card-title">Line Items</h2>
+    <table mat-table [dataSource]="pf.items" class="items-table">
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let item">
+          {{ item.invoiceable_type === 'farm_item' ? 'Farm Item' : 'Service' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="item">
+        <th mat-header-cell *matHeaderCellDef>Item</th>
+        <td mat-cell *matCellDef="let item">{{ item.invoiceable?.name ?? '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="qty">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Qty</th>
+        <td mat-cell *matCellDef="let item" class="col-right">{{ item.quantity | number }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="unit_price">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Unit Price</th>
+        <td mat-cell *matCellDef="let item" class="col-right">{{ item.unit_price | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef class="col-right">Total</th>
+        <td mat-cell *matCellDef="let item" class="col-right">
+          <strong>{{ item.total | number:'1.2-2' }}</strong>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: itemColumns"></tr>
+    </table>
+  </div>
+}

@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MilkSale, MilkSaleService } from '../../../core/services/milk-sale.service';
 import { MilkSaleFormComponent, MilkSaleFormResult } from '../milk-sale-form/milk-sale-form';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-milk-sale-list',
@@ -30,6 +31,7 @@ export class MilkSaleListComponent implements OnInit {
   private readonly milkSaleService = inject(MilkSaleService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly milkSales = signal<MilkSale[]>([]);

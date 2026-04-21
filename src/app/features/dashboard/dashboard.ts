@@ -6,12 +6,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { forkJoin } from 'rxjs';
 import {
   AnalyticsService,
+  ConsumptionSummary,
   DashboardSummary,
   ExpenseCategory,
+  MilkProductionSummary,
   RecentMilkSale,
   RecentPurchase,
   TrendPoint,
 } from '../../core/services/analytics.service';
+import { AuthService } from '../../core/services/auth.service';
 
 interface StatCard {
   label: string;
@@ -28,7 +31,9 @@ interface StatCard {
 })
 export class DashboardComponent implements OnInit {
   private readonly analytics = inject(AnalyticsService);
+  protected readonly auth = inject(AuthService);
 
+  // Admin dashboard state
   protected readonly isLoadingStats = signal(true);
   protected readonly isLoadingPanels = signal(true);
   protected readonly summary = signal<DashboardSummary | null>(null);
@@ -36,6 +41,12 @@ export class DashboardComponent implements OnInit {
   protected readonly expenseBreakdown = signal<ExpenseCategory[]>([]);
   protected readonly recentMilkSales = signal<RecentMilkSale[]>([]);
   protected readonly recentPurchases = signal<RecentPurchase[]>([]);
+
+  // Non-admin dashboard state
+  protected readonly isLoadingSimple = signal(true);
+  protected readonly milkSummary = signal<MilkProductionSummary | null>(null);
+  protected readonly consumptionSummary = signal<ConsumptionSummary | null>(null);
+  protected readonly simpleProductionTrend = signal<TrendPoint[]>([]);
 
   protected readonly stats = computed<StatCard[]>(() => {
     const s = this.summary();
@@ -53,6 +64,14 @@ export class DashboardComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.auth.hasPermission('view reports')) {
+      this.loadAdminDashboard();
+    } else {
+      this.loadSimpleDashboard();
+    }
+  }
+
+  private loadAdminDashboard(): void {
     this.analytics.summary().subscribe({
       next: (data) => {
         this.summary.set(data);
@@ -75,6 +94,22 @@ export class DashboardComponent implements OnInit {
         this.isLoadingPanels.set(false);
       },
       error: () => this.isLoadingPanels.set(false),
+    });
+  }
+
+  private loadSimpleDashboard(): void {
+    forkJoin({
+      milk: this.analytics.milkProductionSummary(),
+      consumption: this.analytics.consumptionSummary(),
+      trend: this.analytics.milkProductionTrend(),
+    }).subscribe({
+      next: ({ milk, consumption, trend }) => {
+        this.milkSummary.set(milk);
+        this.consumptionSummary.set(consumption);
+        this.simpleProductionTrend.set(trend.data);
+        this.isLoadingSimple.set(false);
+      },
+      error: () => this.isLoadingSimple.set(false),
     });
   }
 }

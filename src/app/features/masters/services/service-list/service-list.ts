@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Service, ServiceService } from '../../../../core/services/service.service';
 import { ServiceFormComponent, ServiceFormResult } from '../service-form/service-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-service-list',
@@ -27,6 +28,7 @@ export class ServiceListComponent implements OnInit {
   private readonly service = inject(ServiceService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly services = signal<Service[]>([]);

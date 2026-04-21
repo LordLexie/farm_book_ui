@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppUser, UserService } from '../../../../core/services/user.service';
 import { UserFormComponent } from '../user-form/user-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-user-list',
@@ -27,6 +28,7 @@ export class UserListComponent implements OnInit {
   private readonly service = inject(UserService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly users = signal<AppUser[]>([]);

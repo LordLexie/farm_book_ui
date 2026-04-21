@@ -76,6 +76,16 @@
         }
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label>Tax</mat-label>
+        <mat-select formControlName="tax_id">
+          <mat-option [value]="null">No Tax</mat-option>
+          @for (t of taxes(); track t.id) {
+            <mat-option [value]="t.id">{{ t.name }} ({{ t.value }}%)</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
     </form>
 
     @if (!isEditMode) {
@@ -172,7 +182,13 @@
             @if (headerForm.controls.discount.value > 0) {
               <div class="summary-row discount-row">
                 <span class="summary-label">Discount ({{ headerForm.controls.discount.value }}%)</span>
-                <span class="summary-value">-{{ (subtotal() - computedTotal()) | number:'1.2-2' }}</span>
+                <span class="summary-value">-{{ (subtotal() - subtotal() * (1 - headerForm.controls.discount.value / 100)) | number:'1.2-2' }}</span>
+              </div>
+            }
+            @if (taxAmount() > 0) {
+              <div class="summary-row">
+                <span class="summary-label">Tax</span>
+                <span class="summary-value">+{{ taxAmount() | number:'1.2-2' }}</span>
               </div>
             }
             <div class="summary-row">

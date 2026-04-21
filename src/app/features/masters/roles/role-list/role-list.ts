@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Role, RoleService } from '../../../../core/services/role.service';
 import { RoleFormComponent } from '../role-form/role-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-role-list',
@@ -29,6 +30,7 @@ export class RoleListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly roles = signal<Role[]>([]);

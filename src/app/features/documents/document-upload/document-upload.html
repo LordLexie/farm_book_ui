@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>Upload Document</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="upload-form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Document Name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. Q1 Sales Report" />
+      @if (form.controls.name.hasError('required') && form.controls.name.touched) {
+        <mat-error>Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description (optional)</mat-label>
+      <textarea matInput formControlName="description" rows="2" placeholder="Brief note about this document"></textarea>
+    </mat-form-field>
+
+    <div class="file-picker" (click)="fileInput.click()" [class.has-file]="selectedFile()">
+      <mat-icon class="file-picker-icon">{{ selectedFile() ? 'insert_drive_file' : 'cloud_upload' }}</mat-icon>
+      @if (selectedFile()) {
+        <span class="file-name">{{ selectedFile()!.name }}</span>
+        <span class="file-size">{{ formatSize(selectedFile()!.size) }}</span>
+      } @else {
+        <span class="file-placeholder">Click to choose a file</span>
+        <span class="file-types">Images, PDF, Word, Excel — max 20 MB</span>
+      }
+      <input
+        #fileInput
+        type="file"
+        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx"
+        (change)="onFileSelected($event)"
+        hidden
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    (click)="submit()"
+    [disabled]="isSaving() || !selectedFile()"
+  >
+    @if (isSaving()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      Upload
+    }
+  </button>
+</mat-dialog-actions>

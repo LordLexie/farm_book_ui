@@ -81,34 +81,15 @@
   pointer-events: none;
 }
 
-.skeleton-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+.skeleton-shimmer {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
-  flex-shrink: 0;
 }
 
-.skeleton-value {
-  width: 64px;
-  height: 28px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-  margin-bottom: 6px;
-}
-
-.skeleton-label {
-  width: 96px;
-  height: 13px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-}
+.skeleton-icon  { width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0; }
+.skeleton-value { width: 64px; height: 28px; border-radius: 4px; margin-bottom: 6px; }
+.skeleton-label { width: 96px; height: 13px; border-radius: 4px; }
 
 @keyframes shimmer {
   0% { background-position: 200% 0; }

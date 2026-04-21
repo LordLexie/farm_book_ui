@@ -3,10 +3,12 @@
     <h1 class="page-title">Roles</h1>
     <p class="page-subtitle">Manage roles and their permissions</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add Role
-  </button>
+  @if (auth.hasPermission('manage users')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Role
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">manage_accounts</mat-icon>
       <p>No roles found. Add your first role to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Role</button>
+      @if (auth.hasPermission('manage users')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Role</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="roles()" class="data-table">

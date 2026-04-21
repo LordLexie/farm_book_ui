@@ -3,10 +3,12 @@
     <h1 class="page-title">Permissions</h1>
     <p class="page-subtitle">System permissions managed by the application</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add Permission
-  </button>
+  @if (auth.hasPermission('manage users')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Permission
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">lock</mat-icon>
       <p>No permissions found. Add your first permission to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Permission</button>
+      @if (auth.hasPermission('manage users')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Permission</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="permissions()" class="data-table">

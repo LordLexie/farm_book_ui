@@ -2,147 +2,285 @@
   <h1 class="page-title">Dashboard</h1>
   <p class="page-subtitle">Welcome to Farm Management</p>
 
-  <div class="stats-grid">
-    @if (isLoadingStats()) {
-      @for (i of [1,2,3,4,5,6,7,8]; track i) {
-        <mat-card class="stat-card stat-card--skeleton">
-          <mat-card-content>
-            <div class="stat-content">
-              <div class="skeleton-icon"></div>
-              <div class="stat-info">
-                <div class="skeleton-value"></div>
-                <div class="skeleton-label"></div>
+  @if (auth.hasPermission('view reports')) {
+    <div class="stats-grid">
+      @if (isLoadingStats()) {
+        @for (i of [1,2,3,4,5,6,7,8]; track i) {
+          <mat-card class="stat-card stat-card--skeleton">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="skeleton-icon"></div>
+                <div class="stat-info">
+                  <div class="skeleton-value"></div>
+                  <div class="skeleton-label"></div>
+                </div>
               </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
+            </mat-card-content>
+          </mat-card>
+        }
+      } @else {
+        @for (stat of stats(); track stat.label) {
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon-wrapper" [style.background-color]="stat.color + '1a'">
+                  <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ stat.value }}</span>
+                  <span class="stat-label">{{ stat.label }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
       }
+    </div>
+
+    <div class="section-label">Analytics & Activity</div>
+
+    <div class="panels-grid">
+      <!-- Milk Production Trend -->
+      <mat-card class="panel-card">
+        <mat-card-content>
+          <div class="panel-header">
+            <mat-icon class="panel-icon">show_chart</mat-icon>
+            <div>
+              <div class="panel-title">Milk Production Trend</div>
+              <div class="panel-subtitle">Last 30 days</div>
+            </div>
+          </div>
+          @if (isLoadingPanels()) {
+            <div class="panel-loading"><mat-spinner diameter="24" /></div>
+          } @else if (milkTrend().length === 0) {
+            <div class="panel-empty"><span>No production recorded</span></div>
+          } @else {
+            <div class="panel-list">
+              @for (item of milkTrend().slice(-6); track item.date) {
+                <div class="panel-list-row">
+                  <span class="panel-list-label">{{ item.date }}</span>
+                  <span class="panel-list-value">{{ item.quantity | number:'1.0-1' }} L</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Expense Breakdown -->
+      <mat-card class="panel-card">
+        <mat-card-content>
+          <div class="panel-header">
+            <mat-icon class="panel-icon">pie_chart</mat-icon>
+            <div>
+              <div class="panel-title">Expense Breakdown</div>
+              <div class="panel-subtitle">This month by category</div>
+            </div>
+          </div>
+          @if (isLoadingPanels()) {
+            <div class="panel-loading"><mat-spinner diameter="24" /></div>
+          } @else {
+            <div class="panel-list">
+              @for (item of expenseBreakdown(); track item.category) {
+                <div class="panel-list-row">
+                  <span class="panel-list-label">{{ item.category }}</span>
+                  <span class="panel-list-value">{{ item.total | number:'1.0-0' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Recent Milk Sales -->
+      <mat-card class="panel-card">
+        <mat-card-content>
+          <div class="panel-header">
+            <mat-icon class="panel-icon">sell</mat-icon>
+            <div>
+              <div class="panel-title">Recent Milk Sales</div>
+              <div class="panel-subtitle">Last 7 days</div>
+            </div>
+          </div>
+          @if (isLoadingPanels()) {
+            <div class="panel-loading"><mat-spinner diameter="24" /></div>
+          } @else if (recentMilkSales().length === 0) {
+            <div class="panel-empty"><span>No sales in the last 7 days</span></div>
+          } @else {
+            <div class="panel-list">
+              @for (sale of recentMilkSales(); track $index) {
+                <div class="panel-list-row">
+                  <span class="panel-list-label">{{ sale.customer ?? 'Unknown' }}</span>
+                  <span class="panel-list-value">{{ sale.total | number:'1.0-0' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Recent Purchases -->
+      <mat-card class="panel-card">
+        <mat-card-content>
+          <div class="panel-header">
+            <mat-icon class="panel-icon">shopping_cart</mat-icon>
+            <div>
+              <div class="panel-title">Recent Purchases</div>
+              <div class="panel-subtitle">Last 7 days</div>
+            </div>
+          </div>
+          @if (isLoadingPanels()) {
+            <div class="panel-loading"><mat-spinner diameter="24" /></div>
+          } @else if (recentPurchases().length === 0) {
+            <div class="panel-empty"><span>No purchases in the last 7 days</span></div>
+          } @else {
+            <div class="panel-list">
+              @for (purchase of recentPurchases(); track $index) {
+                <div class="panel-list-row">
+                  <span class="panel-list-label">{{ purchase.supplier ?? 'Unknown' }}</span>
+                  <span class="panel-list-value">{{ purchase.total | number:'1.0-0' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  } @else {
+
+    @if (isLoadingSimple()) {
+      <div class="stats-grid">
+        @for (i of [1,2,3,4]; track i) {
+          <mat-card class="stat-card stat-card--skeleton">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="skeleton-icon"></div>
+                <div class="stat-info">
+                  <div class="skeleton-value"></div>
+                  <div class="skeleton-label"></div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
     } @else {
-      @for (stat of stats(); track stat.label) {
+      <div class="stats-grid">
         <mat-card class="stat-card">
           <mat-card-content>
             <div class="stat-content">
-              <div class="stat-icon-wrapper" [style.background-color]="stat.color + '1a'">
-                <mat-icon [style.color]="stat.color">{{ stat.icon }}</mat-icon>
+              <div class="stat-icon-wrapper" style="background-color: #0288d11a">
+                <mat-icon style="color: #0288d1">water_drop</mat-icon>
               </div>
               <div class="stat-info">
-                <span class="stat-value">{{ stat.value }}</span>
-                <span class="stat-label">{{ stat.label }}</span>
+                <span class="stat-value">{{ milkSummary()?.today?.toFixed(1) ?? '—' }}</span>
+                <span class="stat-label">Today's Milk (L)</span>
               </div>
             </div>
           </mat-card-content>
         </mat-card>
-      }
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" style="background-color: #0277bd1a">
+                <mat-icon style="color: #0277bd">show_chart</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ milkSummary()?.total_mtd?.toFixed(1) ?? '—' }}</span>
+                <span class="stat-label">Milk This Month (L)</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" style="background-color: #2e7d321a">
+                <mat-icon style="color: #2e7d32">grass</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ consumptionSummary()?.today?.toFixed(1) ?? '—' }}</span>
+                <span class="stat-label">Today's Consumption</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <mat-card-content>
+            <div class="stat-content">
+              <div class="stat-icon-wrapper" style="background-color: #1b5e201a">
+                <mat-icon style="color: #1b5e20">inventory</mat-icon>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">{{ consumptionSummary()?.total_mtd?.toFixed(1) ?? '—' }}</span>
+                <span class="stat-label">Consumption This Month</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="section-label">Recent Activity</div>
+
+      <div class="panels-grid">
+        <mat-card class="panel-card">
+          <mat-card-content>
+            <div class="panel-header">
+              <mat-icon class="panel-icon">water_drop</mat-icon>
+              <div>
+                <div class="panel-title">Milk Production Trend</div>
+                <div class="panel-subtitle">Last 30 days</div>
+              </div>
+            </div>
+            @if (simpleProductionTrend().length === 0) {
+              <div class="panel-empty"><span>No production recorded</span></div>
+            } @else {
+              <div class="panel-list">
+                @for (item of simpleProductionTrend().slice(-7); track item.date) {
+                  <div class="panel-list-row">
+                    <span class="panel-list-label">{{ item.date }}</span>
+                    <span class="panel-list-value">{{ item.quantity | number:'1.0-1' }} L</span>
+                  </div>
+                }
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="panel-card">
+          <mat-card-content>
+            <div class="panel-header">
+              <mat-icon class="panel-icon">grass</mat-icon>
+              <div>
+                <div class="panel-title">Consumption This Month</div>
+                <div class="panel-subtitle">Avg {{ consumptionSummary()?.daily_avg_mtd?.toFixed(1) ?? '—' }} / day · {{ consumptionSummary()?.unique_items ?? '—' }} items</div>
+              </div>
+            </div>
+            @if (consumptionSummary()?.most_consumed_item) {
+              <div class="panel-list">
+                <div class="panel-list-row">
+                  <span class="panel-list-label">Most consumed</span>
+                  <span class="panel-list-value">{{ consumptionSummary()?.most_consumed_item }}</span>
+                </div>
+                <div class="panel-list-row">
+                  <span class="panel-list-label">Daily average</span>
+                  <span class="panel-list-value">{{ consumptionSummary()?.daily_avg_mtd?.toFixed(1) ?? '—' }}</span>
+                </div>
+                <div class="panel-list-row">
+                  <span class="panel-list-label">Producing animals</span>
+                  <span class="panel-list-value">{{ milkSummary()?.producing_animals ?? '—' }}</span>
+                </div>
+              </div>
+            } @else {
+              <div class="panel-empty"><span>No consumption recorded this month</span></div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
     }
-  </div>
-
-  <div class="section-label">Analytics & Activity</div>
-
-  <div class="panels-grid">
-    <!-- Milk Production Trend -->
-    <mat-card class="panel-card">
-      <mat-card-content>
-        <div class="panel-header">
-          <mat-icon class="panel-icon">show_chart</mat-icon>
-          <div>
-            <div class="panel-title">Milk Production Trend</div>
-            <div class="panel-subtitle">Last 30 days</div>
-          </div>
-        </div>
-        @if (isLoadingPanels()) {
-          <div class="panel-loading"><mat-spinner diameter="24" /></div>
-        } @else if (milkTrend().length === 0) {
-          <div class="panel-empty"><span>No production recorded</span></div>
-        } @else {
-          <div class="panel-list">
-            @for (item of milkTrend().slice(-6); track item.date) {
-              <div class="panel-list-row">
-                <span class="panel-list-label">{{ item.date }}</span>
-                <span class="panel-list-value">{{ item.quantity | number:'1.0-1' }} L</span>
-              </div>
-            }
-          </div>
-        }
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Expense Breakdown -->
-    <mat-card class="panel-card">
-      <mat-card-content>
-        <div class="panel-header">
-          <mat-icon class="panel-icon">pie_chart</mat-icon>
-          <div>
-            <div class="panel-title">Expense Breakdown</div>
-            <div class="panel-subtitle">This month by category</div>
-          </div>
-        </div>
-        @if (isLoadingPanels()) {
-          <div class="panel-loading"><mat-spinner diameter="24" /></div>
-        } @else {
-          <div class="panel-list">
-            @for (item of expenseBreakdown(); track item.category) {
-              <div class="panel-list-row">
-                <span class="panel-list-label">{{ item.category }}</span>
-                <span class="panel-list-value">{{ item.total | number:'1.0-0' }}</span>
-              </div>
-            }
-          </div>
-        }
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Recent Milk Sales -->
-    <mat-card class="panel-card">
-      <mat-card-content>
-        <div class="panel-header">
-          <mat-icon class="panel-icon">sell</mat-icon>
-          <div>
-            <div class="panel-title">Recent Milk Sales</div>
-            <div class="panel-subtitle">Last 7 days</div>
-          </div>
-        </div>
-        @if (isLoadingPanels()) {
-          <div class="panel-loading"><mat-spinner diameter="24" /></div>
-        } @else if (recentMilkSales().length === 0) {
-          <div class="panel-empty"><span>No sales in the last 7 days</span></div>
-        } @else {
-          <div class="panel-list">
-            @for (sale of recentMilkSales(); track $index) {
-              <div class="panel-list-row">
-                <span class="panel-list-label">{{ sale.customer ?? 'Unknown' }}</span>
-                <span class="panel-list-value">{{ sale.total | number:'1.0-0' }}</span>
-              </div>
-            }
-          </div>
-        }
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Recent Purchases -->
-    <mat-card class="panel-card">
-      <mat-card-content>
-        <div class="panel-header">
-          <mat-icon class="panel-icon">shopping_cart</mat-icon>
-          <div>
-            <div class="panel-title">Recent Purchases</div>
-            <div class="panel-subtitle">Last 7 days</div>
-          </div>
-        </div>
-        @if (isLoadingPanels()) {
-          <div class="panel-loading"><mat-spinner diameter="24" /></div>
-        } @else if (recentPurchases().length === 0) {
-          <div class="panel-empty"><span>No purchases in the last 7 days</span></div>
-        } @else {
-          <div class="panel-list">
-            @for (purchase of recentPurchases(); track $index) {
-              <div class="panel-list-row">
-                <span class="panel-list-label">{{ purchase.supplier ?? 'Unknown' }}</span>
-                <span class="panel-list-value">{{ purchase.total | number:'1.0-0' }}</span>
-              </div>
-            }
-          </div>
-        }
-      </mat-card-content>
-    </mat-card>
-  </div>
+  }
 </div>

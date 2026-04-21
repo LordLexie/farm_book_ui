@@ -3,10 +3,12 @@
     <h1 class="page-title">Item Masters</h1>
     <p class="page-subtitle">Manage inventory items used across the farm</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add Item
-  </button>
+  @if (auth.hasPermission('manage farms')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Item
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">inventory_2</mat-icon>
       <p>No item masters found. Add your first item to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Item Master</button>
+      @if (auth.hasPermission('manage farms')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Item Master</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="itemMasters()" class="items-table">

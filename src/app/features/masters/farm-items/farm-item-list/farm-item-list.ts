@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FarmItem, FarmItemService } from '../../../../core/services/farm-item.service';
 import { FarmItemFormComponent, FarmItemFormResult } from '../farm-item-form/farm-item-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-farm-item-list',
@@ -27,6 +28,7 @@ export class FarmItemListComponent implements OnInit {
   private readonly service = inject(FarmItemService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly farmItems = signal<FarmItem[]>([]);

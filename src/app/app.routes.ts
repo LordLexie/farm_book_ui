@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ShellComponent } from './shared/shell/shell';
 import { authGuard } from './core/guards/auth.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,6 +22,8 @@ export const routes: Routes = [
       },
       {
         path: 'masters/farms',
+        canActivate: [permissionGuard],
+        data: { permission: 'view farms' },
         loadComponent: () =>
           import('./features/masters/farms/farm-list/farm-list').then((m) => m.FarmListComponent),
       },
@@ -96,16 +99,22 @@ export const routes: Routes = [
       },
       {
         path: 'masters/roles/:id/edit',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage users' },
         loadComponent: () =>
           import('./features/masters/roles/role-edit/role-edit').then((m) => m.RoleEditComponent),
       },
       {
         path: 'masters/users',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage users' },
         loadComponent: () =>
           import('./features/masters/users/user-list/user-list').then((m) => m.UserListComponent),
       },
       {
         path: 'masters/permissions',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage users' },
         loadComponent: () =>
           import('./features/masters/permissions/permission-list/permission-list').then(
             (m) => m.PermissionListComponent,
@@ -113,11 +122,15 @@ export const routes: Routes = [
       },
       {
         path: 'masters/roles',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage users' },
         loadComponent: () =>
           import('./features/masters/roles/role-list/role-list').then((m) => m.RoleListComponent),
       },
       {
         path: 'expenses/suppliers',
+        canActivate: [permissionGuard],
+        data: { permission: 'view suppliers' },
         loadComponent: () =>
           import('./features/expenses/suppliers/supplier-list/supplier-list').then(
             (m) => m.SupplierListComponent,
@@ -125,6 +138,8 @@ export const routes: Routes = [
       },
       {
         path: 'expenses/purchases',
+        canActivate: [permissionGuard],
+        data: { permission: 'view purchases' },
         loadComponent: () =>
           import('./features/expenses/purchases/purchase-list/purchase-list').then(
             (m) => m.PurchaseListComponent,
@@ -132,6 +147,8 @@ export const routes: Routes = [
       },
       {
         path: 'expenses/purchases/:id/edit',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage purchases' },
         loadComponent: () =>
           import('./features/expenses/purchases/purchase-edit/purchase-edit').then(
             (m) => m.PurchaseEditComponent,
@@ -139,6 +156,8 @@ export const routes: Routes = [
       },
       {
         path: 'expenses/purchases/:id',
+        canActivate: [permissionGuard],
+        data: { permission: 'view purchases' },
         loadComponent: () =>
           import('./features/expenses/purchases/purchase-view/purchase-view').then(
             (m) => m.PurchaseViewComponent,
@@ -146,6 +165,8 @@ export const routes: Routes = [
       },
       {
         path: 'expenses/bills',
+        canActivate: [permissionGuard],
+        data: { permission: 'view bills' },
         loadComponent: () =>
           import('./features/expenses/bills/bill-list/bill-list').then(
             (m) => m.BillListComponent,
@@ -153,6 +174,8 @@ export const routes: Routes = [
       },
       {
         path: 'expenses/bills/:id/edit',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage bills' },
         loadComponent: () =>
           import('./features/expenses/bills/bill-edit/bill-edit').then(
             (m) => m.BillEditComponent,
@@ -160,6 +183,8 @@ export const routes: Routes = [
       },
       {
         path: 'expenses/bills/:id',
+        canActivate: [permissionGuard],
+        data: { permission: 'view bills' },
         loadComponent: () =>
           import('./features/expenses/bills/bill-view/bill-view').then(
             (m) => m.BillViewComponent,
@@ -167,6 +192,8 @@ export const routes: Routes = [
       },
       {
         path: 'sales/customers',
+        canActivate: [permissionGuard],
+        data: { permission: 'view customers' },
         loadComponent: () =>
           import('./features/sales/customers/customer-list/customer-list').then(
             (m) => m.CustomerListComponent,
@@ -174,6 +201,8 @@ export const routes: Routes = [
       },
       {
         path: 'sales/quotations',
+        canActivate: [permissionGuard],
+        data: { permission: 'view quotations' },
         loadComponent: () =>
           import('./features/sales/quotations/quotation-list/quotation-list').then(
             (m) => m.QuotationListComponent,
@@ -181,6 +210,8 @@ export const routes: Routes = [
       },
       {
         path: 'sales/quotations/:id/edit',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage quotations' },
         loadComponent: () =>
           import('./features/sales/quotations/quotation-edit/quotation-edit').then(
             (m) => m.QuotationEditComponent,
@@ -188,6 +219,8 @@ export const routes: Routes = [
       },
       {
         path: 'sales/quotations/:id',
+        canActivate: [permissionGuard],
+        data: { permission: 'view quotations' },
         loadComponent: () =>
           import('./features/sales/quotations/quotation-view/quotation-view').then(
             (m) => m.QuotationViewComponent,
@@ -195,6 +228,8 @@ export const routes: Routes = [
       },
       {
         path: 'sales/invoices',
+        canActivate: [permissionGuard],
+        data: { permission: 'view invoices' },
         loadComponent: () =>
           import('./features/sales/invoices/invoice-list/invoice-list').then(
             (m) => m.InvoiceListComponent,
@@ -202,6 +237,8 @@ export const routes: Routes = [
       },
       {
         path: 'sales/invoices/:id/edit',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage invoices' },
         loadComponent: () =>
           import('./features/sales/invoices/invoice-edit/invoice-edit').then(
             (m) => m.InvoiceEditComponent,
@@ -209,13 +246,44 @@ export const routes: Routes = [
       },
       {
         path: 'sales/invoices/:id',
+        canActivate: [permissionGuard],
+        data: { permission: 'view invoices' },
         loadComponent: () =>
           import('./features/sales/invoices/invoice-view/invoice-view').then(
             (m) => m.InvoiceViewComponent,
           ),
       },
       {
+        path: 'sales/pro-forma-invoices',
+        canActivate: [permissionGuard],
+        data: { permission: 'view pro-forma-invoices' },
+        loadComponent: () =>
+          import('./features/sales/pro-forma-invoices/pro-forma-invoice-list/pro-forma-invoice-list').then(
+            (m) => m.ProFormaInvoiceListComponent,
+          ),
+      },
+      {
+        path: 'sales/pro-forma-invoices/:id/edit',
+        canActivate: [permissionGuard],
+        data: { permission: 'manage pro-forma-invoices' },
+        loadComponent: () =>
+          import('./features/sales/pro-forma-invoices/pro-forma-invoice-edit/pro-forma-invoice-edit').then(
+            (m) => m.ProFormaInvoiceEditComponent,
+          ),
+      },
+      {
+        path: 'sales/pro-forma-invoices/:id',
+        canActivate: [permissionGuard],
+        data: { permission: 'view pro-forma-invoices' },
+        loadComponent: () =>
+          import('./features/sales/pro-forma-invoices/pro-forma-invoice-view/pro-forma-invoice-view').then(
+            (m) => m.ProFormaInvoiceViewComponent,
+          ),
+      },
+      {
         path: 'sales/payments',
+        canActivate: [permissionGuard],
+        data: { permission: 'view payments' },
         loadComponent: () =>
           import('./features/sales/payments/payment-list/payment-list').then(
             (m) => m.PaymentListComponent,
@@ -223,6 +291,8 @@ export const routes: Routes = [
       },
       {
         path: 'livestock/farm-livestocks',
+        canActivate: [permissionGuard],
+        data: { permission: 'view livestock' },
         loadComponent: () =>
           import('./features/livestock/farm-livestock-list/farm-livestock-list').then(
             (m) => m.FarmLivestockListComponent,
@@ -230,6 +300,8 @@ export const routes: Routes = [
       },
       {
         path: 'livestock/farm-consumptions',
+        canActivate: [permissionGuard],
+        data: { permission: 'view livestock' },
         loadComponent: () =>
           import('./features/livestock/farm-consumption-list/farm-consumption-list').then(
             (m) => m.FarmConsumptionListComponent,
@@ -237,6 +309,8 @@ export const routes: Routes = [
       },
       {
         path: 'milk/milk-productions',
+        canActivate: [permissionGuard],
+        data: { permission: 'view milk-productions' },
         loadComponent: () =>
           import('./features/milk/milk-production-list/milk-production-list').then(
             (m) => m.MilkProductionListComponent,
@@ -244,6 +318,8 @@ export const routes: Routes = [
       },
       {
         path: 'milk-sales',
+        canActivate: [permissionGuard],
+        data: { permission: 'view milk-sales' },
         loadComponent: () =>
           import('./features/milk/milk-sale-list/milk-sale-list').then(
             (m) => m.MilkSaleListComponent,
@@ -251,6 +327,8 @@ export const routes: Routes = [
       },
       {
         path: 'reports/sales-analytics',
+        canActivate: [permissionGuard],
+        data: { permission: 'view reports' },
         loadComponent: () =>
           import('./features/reports/sales-analytics/sales-analytics').then(
             (m) => m.SalesAnalyticsComponent,
@@ -258,6 +336,8 @@ export const routes: Routes = [
       },
       {
         path: 'reports/consumption-analytics',
+        canActivate: [permissionGuard],
+        data: { permission: 'view reports' },
         loadComponent: () =>
           import('./features/reports/consumption-analytics/consumption-analytics').then(
             (m) => m.ConsumptionAnalyticsComponent,
@@ -265,6 +345,8 @@ export const routes: Routes = [
       },
       {
         path: 'reports/milk-production',
+        canActivate: [permissionGuard],
+        data: { permission: 'view reports' },
         loadComponent: () =>
           import('./features/reports/milk-production-report/milk-production-report').then(
             (m) => m.MilkProductionReportComponent,
@@ -272,6 +354,8 @@ export const routes: Routes = [
       },
       {
         path: 'reports/expense-analytics',
+        canActivate: [permissionGuard],
+        data: { permission: 'view reports' },
         loadComponent: () =>
           import('./features/reports/expense-analytics/expense-analytics').then(
             (m) => m.ExpenseAnalyticsComponent,
@@ -279,9 +363,20 @@ export const routes: Routes = [
       },
       {
         path: 'reports/invoice-aging',
+        canActivate: [permissionGuard],
+        data: { permission: 'view reports' },
         loadComponent: () =>
           import('./features/reports/invoice-aging/invoice-aging').then(
             (m) => m.InvoiceAgingComponent,
+          ),
+      },
+      {
+        path: 'documents',
+        canActivate: [permissionGuard],
+        data: { permission: 'view documents' },
+        loadComponent: () =>
+          import('./features/documents/document-list/document-list').then(
+            (m) => m.DocumentListComponent,
           ),
       },
     ],

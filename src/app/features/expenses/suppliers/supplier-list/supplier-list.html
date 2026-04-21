@@ -3,10 +3,12 @@
     <h1 class="page-title">Suppliers</h1>
     <p class="page-subtitle">Manage suppliers for the farm</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Add Supplier
-  </button>
+  @if (auth.hasPermission('manage suppliers')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add Supplier
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">local_shipping</mat-icon>
       <p>No suppliers found. Add a supplier to get started.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Supplier</button>
+      @if (auth.hasPermission('manage suppliers')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Add Supplier</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="suppliers()" class="suppliers-table">
@@ -75,9 +79,11 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let item" class="actions-cell">
-          <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
-            <mat-icon>edit</mat-icon>
-          </button>
+          @if (auth.hasPermission('manage suppliers')) {
+            <button mat-icon-button (click)="openEditDialog(item)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
         </td>
       </ng-container>
 

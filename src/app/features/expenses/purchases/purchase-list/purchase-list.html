@@ -3,10 +3,12 @@
     <h1 class="page-title">Purchases</h1>
     <p class="page-subtitle">Record and manage farm purchases</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openAddDialog()">
-    <mat-icon>add</mat-icon>
-    Record Purchase
-  </button>
+  @if (auth.hasPermission('manage purchases')) {
+    <button mat-flat-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Record Purchase
+    </button>
+  }
 </div>
 
 <div class="table-card">
@@ -18,7 +20,9 @@
     <div class="empty-state">
       <mat-icon class="empty-icon">shopping_cart</mat-icon>
       <p>No purchases recorded yet.</p>
-      <button mat-stroked-button color="primary" (click)="openAddDialog()">Record Purchase</button>
+      @if (auth.hasPermission('manage purchases')) {
+        <button mat-stroked-button color="primary" (click)="openAddDialog()">Record Purchase</button>
+      }
     </div>
   } @else {
     <table mat-table [dataSource]="purchases()" class="data-table">

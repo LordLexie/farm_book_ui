@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Payment, PaymentService } from '../../../../core/services/payment.service';
 import { PaymentFormComponent, PaymentFormResult } from '../payment-form/payment-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-payment-list',
@@ -30,6 +31,7 @@ export class PaymentListComponent implements OnInit {
   private readonly paymentService = inject(PaymentService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly payments = signal<Payment[]>([]);

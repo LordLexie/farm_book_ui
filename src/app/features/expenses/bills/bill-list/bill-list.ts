@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Bill, BillService } from '../../../../core/services/bill.service';
 import { BillFormComponent, BillFormResult } from '../bill-form/bill-form';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-bill-list',
@@ -23,6 +24,7 @@ export class BillListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   protected readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
 
   protected readonly isLoading = signal(true);
   protected readonly bills = signal<Bill[]>([]);
