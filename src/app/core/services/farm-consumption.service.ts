@@ -78,10 +78,14 @@ export class FarmConsumptionService {
   }
 
   getFarmItems(): Observable<{ farm_items: ConsumptionFarmItem[] }> {
-    return this.http.get<{ farm_items: ConsumptionFarmItem[] }>('/api/v1/farm-items');
+    return this.http.get<{ farm_items: ConsumptionFarmItem[] }>('/api/v1/farm-items', {
+      params: { per_page: 1000 },
+    });
   }
 
   getLivestocks(): Observable<{ farm_livestocks: ConsumptionLivestock[] }> {
-    return this.http.get<{ farm_livestocks: ConsumptionLivestock[] }>('/api/v1/farm-livestocks');
+    return this.http.get<{ farm_livestocks: ConsumptionLivestock[] }>('/api/v1/farm-livestocks', {
+      params: { per_page: 1000 },
+    });
   }
 }

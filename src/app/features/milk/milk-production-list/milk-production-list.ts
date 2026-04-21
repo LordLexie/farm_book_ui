@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +17,7 @@ import {
 @Component({
   selector: 'app-milk-production-list',
   imports: [
+    DatePipe,
     DecimalPipe,
     MatTableModule,
     MatButtonModule,
@@ -101,7 +102,7 @@ export class MilkProductionListComponent implements OnInit {
   }
 
   protected sessionLabel(item: MilkProduction): string {
-    return item.farm_session?.session_type?.name ?? '—';
+    return item.farm_session?.name ?? '—';
   }
 
   protected livestockLabel(item: MilkProduction): string {

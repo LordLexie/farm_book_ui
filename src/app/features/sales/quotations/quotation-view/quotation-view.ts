@@ -30,6 +30,9 @@ export class QuotationViewComponent implements OnInit {
       next: (res) => {
         this.quotation.set(res.quotation);
         this.isLoading.set(false);
+        if (this.route.snapshot.queryParamMap.has('print')) {
+          setTimeout(() => window.print(), 300);
+        }
       },
       error: () => {
         this.errorMessage.set('Failed to load quotation.');

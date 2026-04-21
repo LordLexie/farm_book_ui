@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$spring-green-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
+  // RTL brand color overrides
+  --mat-sys-primary: #1b6b5a;
+  --mat-toolbar-container-background-color: white;
+  --mat-toolbar-container-text-color: rgba(0, 0, 0, 0.87);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #d0ece7;
+  --mat-sys-on-primary-container: #003d30;
+  --mat-sys-inverse-primary: #8dd5c5;
+}
+
+mat-toolbar[color="primary"] {
+  --mat-toolbar-container-background-color: #1b6b5a;
+  --mat-toolbar-container-text-color: #ffffff;
+}

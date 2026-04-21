@@ -112,3 +112,18 @@
 .col-right {
   text-align: right;
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .view-page-header button {
+    display: none !important;
+  }
+
+  .view-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}

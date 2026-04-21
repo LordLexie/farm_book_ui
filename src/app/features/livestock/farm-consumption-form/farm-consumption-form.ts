@@ -58,7 +58,7 @@ export class FarmConsumptionFormComponent implements OnInit {
       this.consumption?.quantity ?? ('' as unknown as number),
       [Validators.required, Validators.min(0)],
     ],
-    consumption_date: [this.consumption?.consumption_date ?? '', [Validators.required]],
+    consumption_date: [this.consumption?.consumption_date ?? new Date().toISOString().split('T')[0], [Validators.required]],
     livestock_id: [this.consumption?.livestock_id ?? ('' as unknown as number)],
   });
 

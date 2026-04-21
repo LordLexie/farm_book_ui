@@ -26,12 +26,6 @@ export interface CustomerBillingCycle {
   name: string;
 }
 
-export interface CustomerRatePlan {
-  id: number;
-  code: string;
-  name: string;
-}
-
 export interface Customer {
   id: number;
   code: string;
@@ -47,13 +41,11 @@ export interface Customer {
   contact_person: string | null;
   status_id: number;
   billing_cycle_id: number | null;
-  rate_plan_id: number | null;
   amount_due: number;
   credit: number;
   status: CustomerStatus | null;
   gender: CustomerGender | null;
   billingCycle: CustomerBillingCycle | null;
-  ratePlan: CustomerRatePlan | null;
 }
 
 export interface CustomerPayload {
@@ -69,7 +61,6 @@ export interface CustomerPayload {
   registration_number?: string | null;
   contact_person?: string | null;
   billing_cycle_id?: number | null;
-  rate_plan_id?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -100,9 +91,5 @@ export class CustomerService {
 
   getBillingCycles(): Observable<{ billing_cycles: CustomerBillingCycle[] }> {
     return this.http.get<{ billing_cycles: CustomerBillingCycle[] }>('/api/v1/billing-cycles');
-  }
-
-  getRatePlans(): Observable<{ rate_plans: CustomerRatePlan[] }> {
-    return this.http.get<{ rate_plans: CustomerRatePlan[] }>('/api/v1/rate-plans');
   }
 }

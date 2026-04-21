@@ -2,23 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface MilkSessionType {
-  id: number;
-  name: string;
-}
-
-export interface MilkSessionFarm {
-  id: number;
-  name: string;
-}
-
 export interface MilkSession {
   id: number;
   code: string;
-  notes: string | null;
-  farm: MilkSessionFarm | null;
-  session_type: MilkSessionType | null;
-  started_at: string;
+  name: string;
+  start_time: string | null;
+  end_time: string | null;
+  type: 'milking' | 'feeding';
 }
 
 export interface MilkLivestock {
@@ -84,7 +74,9 @@ export class MilkProductionService {
   }
 
   getLivestocks(): Observable<{ farm_livestocks: MilkLivestock[] }> {
-    return this.http.get<{ farm_livestocks: MilkLivestock[] }>('/api/v1/farm-livestocks');
+    return this.http.get<{ farm_livestocks: MilkLivestock[] }>('/api/v1/farm-livestocks', {
+      params: { per_page: 1000 },
+    });
   }
 
   getSessions(): Observable<{ farm_sessions: MilkSession[] }> {

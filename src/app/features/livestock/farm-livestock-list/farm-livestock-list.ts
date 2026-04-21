@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +17,7 @@ import {
 @Component({
   selector: 'app-farm-livestock-list',
   imports: [
+    DatePipe,
     MatTableModule,
     MatButtonModule,
     MatIconModule,

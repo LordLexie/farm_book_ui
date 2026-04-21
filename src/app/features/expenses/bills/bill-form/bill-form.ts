@@ -90,7 +90,7 @@ export class BillFormComponent implements OnInit {
   private buildItemRow() {
     return this.fb.nonNullable.group({
       service_id: ['' as unknown as number, [Validators.required]],
-      unit_of_measure_id: ['' as unknown as number, [Validators.required]],
+      unit_of_measure_id: ['' as unknown as number],
       quantity: ['' as unknown as number, [Validators.required, Validators.min(0)]],
       unit_price: ['' as unknown as number, [Validators.required, Validators.min(0)]],
     });

@@ -29,6 +29,20 @@ export class PermissionService {
     );
   }
 
+  create(name: string): Observable<{ message: string; permission: Permission }> {
+    return this.http.post<{ message: string; permission: Permission }>(
+      `${this.base}/permissions`,
+      { name },
+    );
+  }
+
+  update(id: number, name: string): Observable<{ message: string; permission: Permission }> {
+    return this.http.patch<{ message: string; permission: Permission }>(
+      `${this.base}/permissions/${id}`,
+      { name },
+    );
+  }
+
   getAllUnpaginated(): Observable<Permission[]> {
     return this.http
       .get<{ permissions: Permission[]; meta: PaginationMeta }>(`${this.base}/permissions`, {

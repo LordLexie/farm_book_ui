@@ -116,14 +116,7 @@ export class MilkProductionFormComponent implements OnInit {
   }
 
   protected sessionLabel(session: MilkSession): string {
-    const parts = [session.code];
-    if (session.session_type?.name) {
-      parts.push(session.session_type.name);
-    }
-    if (session.notes) {
-      parts.push(session.notes);
-    }
-    return parts.join(' — ');
+    return session.name;
   }
 
   protected livestockLabel(item: MilkLivestock): string {

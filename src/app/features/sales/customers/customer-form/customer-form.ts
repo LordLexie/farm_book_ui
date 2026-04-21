@@ -13,7 +13,6 @@ import {
   CustomerBillingCycle,
   CustomerGender,
   CustomerPayload,
-  CustomerRatePlan,
   CustomerService,
 } from '../../../../core/services/customer.service';
 
@@ -47,7 +46,6 @@ export class CustomerFormComponent implements OnInit {
   protected readonly errorMessage = signal('');
   protected readonly genders = signal<CustomerGender[]>([]);
   protected readonly billingCycles = signal<CustomerBillingCycle[]>([]);
-  protected readonly ratePlans = signal<CustomerRatePlan[]>([]);
   protected readonly currentType = signal<'individual' | 'organization'>(
     this.customer?.type ?? 'individual',
   );
@@ -61,7 +59,6 @@ export class CustomerFormComponent implements OnInit {
     phone: [this.customer?.phone ?? ''],
     address: [this.customer?.address ?? ''],
     billing_cycle_id: [this.customer?.billing_cycle_id ?? ('' as unknown as number)],
-    rate_plan_id: [this.customer?.rate_plan_id ?? ('' as unknown as number)],
     first_name: [this.customer?.first_name ?? '', [Validators.required]],
     last_name: [this.customer?.last_name ?? '', [Validators.required]],
     gender_id: [this.customer?.gender_id ?? ('' as unknown as number)],
@@ -73,20 +70,13 @@ export class CustomerFormComponent implements OnInit {
     forkJoin({
       genders: this.customerService.getGenders(),
       billingCycles: this.customerService.getBillingCycles(),
-      ratePlans: this.customerService.getRatePlans(),
     }).subscribe({
-      next: ({ genders, billingCycles, ratePlans }) => {
+      next: ({ genders, billingCycles }) => {
         this.genders.set(genders.genders);
         this.billingCycles.set(billingCycles.billing_cycles);
-        this.ratePlans.set(ratePlans.rate_plans);
 
-        if (!this.isEditMode) {
-          if (billingCycles.billing_cycles.length) {
-            this.customerForm.controls.billing_cycle_id.setValue(billingCycles.billing_cycles[0].id);
-          }
-          if (ratePlans.rate_plans.length) {
-            this.customerForm.controls.rate_plan_id.setValue(ratePlans.rate_plans[0].id);
-          }
+        if (!this.isEditMode && billingCycles.billing_cycles.length) {
+          this.customerForm.controls.billing_cycle_id.setValue(billingCycles.billing_cycles[0].id);
         }
 
         this.isLoadingOptions.set(false);
@@ -141,10 +131,6 @@ export class CustomerFormComponent implements OnInit {
 
     if (v.billing_cycle_id) {
       payload.billing_cycle_id = v.billing_cycle_id;
-    }
-
-    if (v.rate_plan_id) {
-      payload.rate_plan_id = v.rate_plan_id;
     }
 
     const obs$ = this.isEditMode

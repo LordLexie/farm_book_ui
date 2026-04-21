@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { PaymentFormComponent, PaymentFormResult } from '../payment-form/payment
 @Component({
   selector: 'app-payment-list',
   imports: [
+    DatePipe,
     DecimalPipe,
     MatTableModule,
     MatButtonModule,
@@ -79,6 +80,13 @@ export class PaymentListComponent implements OnInit {
         this.pageIndex.set(0);
         this.loadData();
       }
+    });
+  }
+
+  protected printReceipt(payment: Payment): void {
+    this.paymentService.getReceiptUrl(payment.id).subscribe({
+      next: ({ url }) => window.open(url, '_blank'),
+      error: () => this.snackBar.open('Could not generate receipt link.', 'Close', { duration: 3000 }),
     });
   }
 

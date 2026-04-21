@@ -109,7 +109,7 @@ export class QuotationService {
   }
 
   getStatuses(): Observable<{ statuses: QuotationStatus[] }> {
-    return this.http.get<{ statuses: QuotationStatus[] }>('/api/v1/statuses');
+    return this.http.get<{ statuses: QuotationStatus[] }>('/api/v1/statuses?category=GEN');
   }
 
   getUnitOfMeasures(): Observable<{ unit_of_measures: QuotationUnitOfMeasure[] }> {

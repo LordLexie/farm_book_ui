@@ -130,7 +130,7 @@ export class InvoiceService {
   }
 
   getStatuses(): Observable<{ statuses: InvoiceStatus[] }> {
-    return this.http.get<{ statuses: InvoiceStatus[] }>('/api/v1/statuses');
+    return this.http.get<{ statuses: InvoiceStatus[] }>('/api/v1/statuses?category=GEN');
   }
 
   getCurrencies(): Observable<{ currencies: InvoiceCurrency[] }> {
@@ -138,11 +138,15 @@ export class InvoiceService {
   }
 
   getFarmItems(): Observable<{ farm_items: InvoiceFarmItem[] }> {
-    return this.http.get<{ farm_items: InvoiceFarmItem[] }>('/api/v1/farm-items');
+    return this.http.get<{ farm_items: InvoiceFarmItem[] }>('/api/v1/farm-items', {
+      params: { per_page: 1000 },
+    });
   }
 
   getServices(): Observable<{ services: InvoiceService[] }> {
-    return this.http.get<{ services: InvoiceService[] }>('/api/v1/services');
+    return this.http.get<{ services: InvoiceService[] }>('/api/v1/services', {
+      params: { per_page: 1000 },
+    });
   }
 
   getUnitOfMeasures(): Observable<{ unit_of_measures: InvoiceUnitOfMeasure[] }> {

@@ -88,4 +88,8 @@ export class PaymentService {
   getPaymentModes(): Observable<{ payment_modes: PaymentMode[] }> {
     return this.http.get<{ payment_modes: PaymentMode[] }>('/api/v1/payment-modes');
   }
+
+  getReceiptUrl(id: number): Observable<{ url: string }> {
+    return this.http.get<{ url: string }>(`/api/v1/payments/${id}/print-url`);
+  }
 }

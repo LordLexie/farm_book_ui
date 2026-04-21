@@ -41,4 +41,8 @@ export class PurchaseViewComponent implements OnInit {
   protected isActive(): boolean {
     return this.purchase()?.status?.code === 'ACT';
   }
+
+  protected print(): void {
+    window.print();
+  }
 }

@@ -6,9 +6,13 @@
     <h1 class="view-page-title">Purchase{{ purchase() ? ' ' + purchase()!.code : '' }}</h1>
   </div>
   @if (purchase()) {
-    <button mat-stroked-button (click)="router.navigate(['/expenses/purchases', purchase()!.id, 'edit'])">
+    <button mat-stroked-button (click)="router.navigate(['/expenses/purchases', purchase()!.id, 'edit'])" class="no-print">
       <mat-icon>edit</mat-icon>
       Edit
+    </button>
+    <button mat-flat-button color="primary" (click)="print()" class="no-print">
+      <mat-icon>print</mat-icon>
+      Print
     </button>
   }
 </div>

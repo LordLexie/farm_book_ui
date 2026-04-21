@@ -30,6 +30,9 @@ export class InvoiceViewComponent implements OnInit {
       next: (res) => {
         this.invoice.set(res.invoice);
         this.isLoading.set(false);
+        if (this.route.snapshot.queryParamMap.has('print')) {
+          setTimeout(() => window.print(), 300);
+        }
       },
       error: () => {
         this.errorMessage.set('Failed to load invoice.');

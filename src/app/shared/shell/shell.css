@@ -4,7 +4,9 @@
 
 .sidenav {
   width: 240px;
-  background-color: #1a237e;
+  --mat-sidenav-container-shape: 0;
+  --mat-sidenav-container-background-color: #1b6b5a;
+  background-color: #1b6b5a;
   color: white;
 }
 

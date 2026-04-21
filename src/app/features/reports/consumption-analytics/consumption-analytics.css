@@ -208,14 +208,14 @@
   stroke-linecap: round;
 }
 
-.chart-line--green { stroke: #2e7d32; }
+.chart-line--green { stroke: #1b6b5a; }
 .chart-line--teal  { stroke: #00897b; }
 
 .chart-fill {
   opacity: 0.12;
 }
 
-.chart-fill--green { fill: #2e7d32; }
+.chart-fill--green { fill: #1b6b5a; }
 .chart-fill--teal  { fill: #00897b; }
 
 .chart-labels {

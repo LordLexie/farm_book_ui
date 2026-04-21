@@ -74,7 +74,7 @@ export class MilkSaleFormComponent implements OnInit {
       [Validators.required, Validators.min(0)],
     ],
     unit_price: [
-      { value: this.milkSale?.unit_price ?? ('' as unknown as number), disabled: true },
+      this.milkSale?.unit_price ?? ('' as unknown as number),
       [Validators.required, Validators.min(0)],
     ],
   });
