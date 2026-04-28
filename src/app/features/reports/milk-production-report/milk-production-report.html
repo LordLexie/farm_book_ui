@@ -128,7 +128,7 @@
                   <span class="animal-name">{{ animal.name }}</span>
                   <span class="animal-code">{{ animal.code }}</span>
                 </div>
-                <span class="animal-total">{{ animal.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }} L</span>
+                <span class="animal-total">{{ animal.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }} KGs</span>
               </div>
             }
           </div>
@@ -155,7 +155,7 @@
             @for (item of bySessionData(); track item.session) {
               <div class="session-row">
                 <span class="session-name">{{ item.session }}</span>
-                <span class="session-total">{{ item.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }} L</span>
+                <span class="session-total">{{ item.total.toLocaleString(undefined, { maximumFractionDigits: 1 }) }} KGs</span>
               </div>
             }
           </div>

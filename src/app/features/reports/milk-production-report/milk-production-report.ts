@@ -47,11 +47,11 @@ export class MilkProductionReportComponent implements OnInit {
     const s = this.summaryData();
     const fmt = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 1 });
     return [
-      { label: 'Total Production (MTD)', value: s ? `${fmt(s.total_mtd)} L` : '—', icon: 'opacity', color: '#2e7d32' },
-      { label: "Today's Production", value: s ? `${fmt(s.today)} L` : '—', icon: 'today', color: '#0288d1' },
-      { label: 'Daily Average (MTD)', value: s ? `${fmt(s.daily_avg_mtd)} L` : '—', icon: 'show_chart', color: '#00897b' },
+      { label: 'Total Production (MTD)', value: s ? `${fmt(s.total_mtd)} KGs` : '—', icon: 'opacity', color: '#2e7d32' },
+      { label: "Today's Production", value: s ? `${fmt(s.today)} KGs` : '—', icon: 'today', color: '#0288d1' },
+      { label: 'Daily Average (MTD)', value: s ? `${fmt(s.daily_avg_mtd)} KGs` : '—', icon: 'show_chart', color: '#00897b' },
       { label: 'Producing Animals', value: s ? String(s.producing_animals) : '—', icon: 'pets', color: '#7b1fa2' },
-      { label: 'Peak Day This Month', value: s ? `${fmt(s.peak_quantity)} L` : '—', icon: 'arrow_upward', color: '#e65100' },
+      { label: 'Peak Day This Month', value: s ? `${fmt(s.peak_quantity)} KGs` : '—', icon: 'arrow_upward', color: '#e65100' },
     ];
   });
 

@@ -371,6 +371,15 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'reports/login-log',
+        canActivate: [permissionGuard],
+        data: { permission: 'view reports' },
+        loadComponent: () =>
+          import('./features/reports/login-log-report/login-log-report').then(
+            (m) => m.LoginLogReportComponent,
+          ),
+      },
+      {
         path: 'documents',
         canActivate: [permissionGuard],
         data: { permission: 'view documents' },
