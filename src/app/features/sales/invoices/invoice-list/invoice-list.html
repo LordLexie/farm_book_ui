@@ -98,6 +98,9 @@
               <mat-icon>visibility</mat-icon>
               View
             </button>
+            <button mat-menu-item (click)="printInvoice(item)" [disabled]="printingId() === item.id">
+              <mat-icon>print</mat-icon> {{ printingId() === item.id ? 'Loading...' : 'Print' }}
+            </button>
           </mat-menu>
         </td>
       </ng-container>

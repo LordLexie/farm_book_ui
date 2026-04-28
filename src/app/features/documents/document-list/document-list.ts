@@ -114,8 +114,10 @@ export class DocumentListComponent implements OnInit {
         const a = document.createElement('a');
         a.href = url;
         a.download = doc.original_name;
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100);
       },
       error: () => {
         this.downloadingId.set(null);

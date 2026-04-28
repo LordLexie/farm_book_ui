@@ -13,6 +13,8 @@ import { forkJoin } from 'rxjs';
 import {
   QuotationService,
   QuotationCustomer,
+  QuotationCurrency,
+  QuotationTax,
   QuotationUnitOfMeasure,
   StoreQuotationPayload,
 } from '../../../../core/services/quotation.service';
@@ -42,15 +44,17 @@ export class QuotationFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly quotationService = inject(QuotationService);
   private readonly dialogRef = inject(MatDialogRef<QuotationFormComponent>);
-
-  // dialog always opens for create; data injection kept for compatibility but unused
   protected readonly _data = inject(MAT_DIALOG_DATA);
 
   protected readonly isLoadingOptions = signal(true);
   protected readonly isSaving = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly customers = signal<QuotationCustomer[]>([]);
+  protected readonly currencies = signal<QuotationCurrency[]>([]);
+  protected readonly taxes = signal<QuotationTax[]>([]);
   protected readonly unitOfMeasures = signal<QuotationUnitOfMeasure[]>([]);
+  protected readonly subtotal = signal(0);
+  protected readonly taxAmount = signal(0);
   protected readonly computedTotal = signal(0);
   protected readonly customerSearch = signal('');
   protected readonly filteredCustomers = computed(() => {
@@ -60,6 +64,9 @@ export class QuotationFormComponent implements OnInit {
 
   protected readonly headerForm = this.fb.nonNullable.group({
     customer_id: ['' as unknown as number, [Validators.required]],
+    currency_id: ['' as unknown as number, [Validators.required]],
+    tax_id: [null as number | null],
+    discount: [0, [Validators.min(0), Validators.max(100)]],
     date: [new Date().toISOString().substring(0, 10), [Validators.required]],
     valid_until: [''],
     notes: [''],
@@ -86,11 +93,18 @@ export class QuotationFormComponent implements OnInit {
   ngOnInit(): void {
     forkJoin({
       customers: this.quotationService.getCustomers(),
+      currencies: this.quotationService.getCurrencies(),
+      taxes: this.quotationService.getTaxes(),
       unitOfMeasures: this.quotationService.getUnitOfMeasures(),
     }).subscribe({
-      next: ({ customers, unitOfMeasures }) => {
+      next: ({ customers, currencies, taxes, unitOfMeasures }) => {
         this.customers.set(customers.customers);
+        this.currencies.set(currencies.currencies);
+        this.taxes.set(taxes.taxes);
         this.unitOfMeasures.set(unitOfMeasures.unit_of_measures);
+        if (currencies.currencies[0]) {
+          this.headerForm.controls.currency_id.setValue(currencies.currencies[0].id);
+        }
         this.isLoadingOptions.set(false);
       },
       error: () => {
@@ -99,13 +113,24 @@ export class QuotationFormComponent implements OnInit {
       },
     });
 
-    this.itemsForm.valueChanges.subscribe(() => {
-      const total = this.rows.getRawValue().reduce(
-        (sum, r) => sum + ((r.quantity ?? 0) * (r.unit_price ?? 0)),
-        0,
-      );
-      this.computedTotal.set(total);
-    });
+    this.itemsForm.valueChanges.subscribe(() => this.recomputeTotal());
+    this.headerForm.controls.discount.valueChanges.subscribe(() => this.recomputeTotal());
+    this.headerForm.controls.tax_id.valueChanges.subscribe(() => this.recomputeTotal());
+  }
+
+  private recomputeTotal(): void {
+    const subtotalVal = this.rows.getRawValue().reduce(
+      (sum, r) => sum + ((r.quantity ?? 0) * (r.unit_price ?? 0)),
+      0,
+    );
+    this.subtotal.set(subtotalVal);
+    const discount     = this.headerForm.controls.discount.value ?? 0;
+    const afterDiscount = subtotalVal * (1 - discount / 100);
+    const taxId        = this.headerForm.controls.tax_id.value;
+    const tax          = this.taxes().find((t) => t.id === taxId);
+    const taxAmt       = tax ? afterDiscount * (tax.value / 100) : 0;
+    this.taxAmount.set(taxAmt);
+    this.computedTotal.set(afterDiscount + taxAmt);
   }
 
   protected addRow(): void {
@@ -124,9 +149,7 @@ export class QuotationFormComponent implements OnInit {
   }
 
   protected submit(): void {
-    if (this.headerForm.invalid || this.itemsForm.invalid) {
-      return;
-    }
+    if (this.headerForm.invalid || this.itemsForm.invalid) return;
 
     this.isSaving.set(true);
     this.errorMessage.set('');
@@ -134,6 +157,9 @@ export class QuotationFormComponent implements OnInit {
     const v = this.headerForm.getRawValue();
     const payload: StoreQuotationPayload = {
       customer_id: v.customer_id,
+      currency_id: v.currency_id,
+      tax_id: v.tax_id,
+      discount: v.discount,
       date: v.date,
       valid_until: v.valid_until || null,
       notes: v.notes || null,

@@ -84,6 +84,9 @@
             <button mat-menu-item (click)="navigateToView(item)">
               <mat-icon>visibility</mat-icon> View
             </button>
+            <button mat-menu-item (click)="printQuotation(item)" [disabled]="printingId() === item.id">
+              <mat-icon>print</mat-icon> {{ printingId() === item.id ? 'Loading...' : 'Print' }}
+            </button>
           </mat-menu>
         </td>
       </ng-container>

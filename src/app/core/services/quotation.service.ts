@@ -21,6 +21,19 @@ export interface QuotationCustomer {
   name: string;
 }
 
+export interface QuotationCurrency {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface QuotationTax {
+  id: number;
+  code: string;
+  name: string;
+  value: number;
+}
+
 export interface QuotationUnitOfMeasure {
   id: number;
   code: string;
@@ -42,12 +55,17 @@ export interface Quotation {
   code: string;
   customer_id: number;
   status_id: number;
+  currency_id: number | null;
+  tax_id: number | null;
+  discount: number;
   date: string;
   valid_until: string | null;
   total: number;
   notes: string | null;
   customer: QuotationCustomer | null;
   status: QuotationStatus | null;
+  currency: QuotationCurrency | null;
+  tax: QuotationTax | null;
   items: QuotationItem[];
 }
 
@@ -61,6 +79,9 @@ export interface QuotationItemPayload {
 
 export interface StoreQuotationPayload {
   customer_id: number;
+  currency_id?: number | null;
+  tax_id?: number | null;
+  discount?: number;
   date: string;
   valid_until?: string | null;
   notes?: string | null;
@@ -70,6 +91,9 @@ export interface StoreQuotationPayload {
 export interface UpdateQuotationPayload {
   customer_id?: number;
   status_id?: number;
+  currency_id?: number | null;
+  tax_id?: number | null;
+  discount?: number;
   date?: string;
   valid_until?: string | null;
   notes?: string | null;
@@ -110,6 +134,14 @@ export class QuotationService {
 
   getStatuses(): Observable<{ statuses: QuotationStatus[] }> {
     return this.http.get<{ statuses: QuotationStatus[] }>('/api/v1/statuses?category=GEN');
+  }
+
+  getCurrencies(): Observable<{ currencies: QuotationCurrency[] }> {
+    return this.http.get<{ currencies: QuotationCurrency[] }>('/api/v1/currencies');
+  }
+
+  getTaxes(): Observable<{ taxes: QuotationTax[] }> {
+    return this.http.get<{ taxes: QuotationTax[] }>('/api/v1/taxes');
   }
 
   getUnitOfMeasures(): Observable<{ unit_of_measures: QuotationUnitOfMeasure[] }> {

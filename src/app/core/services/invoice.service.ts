@@ -33,7 +33,7 @@ export interface InvoiceFarmItem {
   name: string;
 }
 
-export interface InvoiceService {
+export interface InvoiceServiceItem {
   id: number;
   code: string;
   name: string;
@@ -61,7 +61,7 @@ export interface InvoiceItem {
   quantity: number;
   unit_price: number;
   total: number;
-  invoiceable: InvoiceFarmItem | InvoiceService | null;
+  invoiceable: InvoiceFarmItem | InvoiceServiceItem | null;
   unit_of_measure: InvoiceUnitOfMeasure | null;
 }
 
@@ -154,8 +154,8 @@ export class InvoiceService {
     });
   }
 
-  getServices(): Observable<{ services: InvoiceService[] }> {
-    return this.http.get<{ services: InvoiceService[] }>('/api/v1/services', {
+  getServices(): Observable<{ services: InvoiceServiceItem[] }> {
+    return this.http.get<{ services: InvoiceServiceItem[] }>('/api/v1/services', {
       params: { per_page: 1000 },
     });
   }

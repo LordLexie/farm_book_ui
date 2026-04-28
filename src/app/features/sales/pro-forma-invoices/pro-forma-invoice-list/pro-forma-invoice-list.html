@@ -88,6 +88,9 @@
               <mat-icon>edit</mat-icon>
               Edit
             </button>
+            <button mat-menu-item (click)="printProForma(item)" [disabled]="printingId() === item.id">
+              <mat-icon>print</mat-icon> {{ printingId() === item.id ? 'Loading...' : 'Print' }}
+            </button>
             <button mat-menu-item (click)="convert(item)">
               <mat-icon>swap_horiz</mat-icon>
               Convert to Invoice

@@ -14,6 +14,8 @@ import { forkJoin } from 'rxjs';
 import {
   Quotation,
   QuotationCustomer,
+  QuotationCurrency,
+  QuotationTax,
   QuotationService,
   QuotationStatus,
   QuotationUnitOfMeasure,
@@ -49,7 +51,11 @@ export class QuotationEditComponent implements OnInit {
   protected readonly quotation = signal<Quotation | null>(null);
   protected readonly customers = signal<QuotationCustomer[]>([]);
   protected readonly statuses = signal<QuotationStatus[]>([]);
+  protected readonly currencies = signal<QuotationCurrency[]>([]);
+  protected readonly taxes = signal<QuotationTax[]>([]);
   protected readonly unitOfMeasures = signal<QuotationUnitOfMeasure[]>([]);
+  protected readonly subtotal = signal(0);
+  protected readonly taxAmount = signal(0);
   protected readonly computedTotal = signal(0);
   protected readonly customerSearch = signal('');
   protected readonly filteredCustomers = computed(() => {
@@ -60,6 +66,9 @@ export class QuotationEditComponent implements OnInit {
   protected readonly headerForm = this.fb.nonNullable.group({
     customer_id: ['' as unknown as number, [Validators.required]],
     status_id: ['' as unknown as number],
+    currency_id: ['' as unknown as number, [Validators.required]],
+    tax_id: [null as number | null],
+    discount: [0, [Validators.min(0), Validators.max(100)]],
     date: ['', [Validators.required]],
     valid_until: [''],
     notes: [''],
@@ -96,18 +105,25 @@ export class QuotationEditComponent implements OnInit {
       quotation: this.quotationService.getById(id),
       customers: this.quotationService.getCustomers(),
       statuses: this.quotationService.getStatuses(),
+      currencies: this.quotationService.getCurrencies(),
+      taxes: this.quotationService.getTaxes(),
       unitOfMeasures: this.quotationService.getUnitOfMeasures(),
     }).subscribe({
-      next: ({ quotation, customers, statuses, unitOfMeasures }) => {
+      next: ({ quotation, customers, statuses, currencies, taxes, unitOfMeasures }) => {
         this.quotation.set(quotation.quotation);
         this.customers.set(customers.customers);
         this.statuses.set(statuses.statuses);
+        this.currencies.set(currencies.currencies);
+        this.taxes.set(taxes.taxes);
         this.unitOfMeasures.set(unitOfMeasures.unit_of_measures);
 
         const q = quotation.quotation;
         this.headerForm.patchValue({
           customer_id: q.customer_id,
           status_id: q.status_id,
+          currency_id: q.currency_id ?? ('' as unknown as number),
+          tax_id: q.tax_id ?? null,
+          discount: q.discount ?? 0,
           date: q.date.substring(0, 10),
           valid_until: q.valid_until?.substring(0, 10) ?? '',
           notes: q.notes ?? '',
@@ -128,14 +144,23 @@ export class QuotationEditComponent implements OnInit {
     });
 
     this.itemsForm.valueChanges.subscribe(() => this.recomputeTotal());
+    this.headerForm.controls.discount.valueChanges.subscribe(() => this.recomputeTotal());
+    this.headerForm.controls.tax_id.valueChanges.subscribe(() => this.recomputeTotal());
   }
 
   private recomputeTotal(): void {
-    const total = this.rows.getRawValue().reduce(
+    const subtotalVal = this.rows.getRawValue().reduce(
       (sum, r) => sum + ((r.quantity ?? 0) * (r.unit_price ?? 0)),
       0,
     );
-    this.computedTotal.set(total);
+    this.subtotal.set(subtotalVal);
+    const discount      = this.headerForm.controls.discount.value ?? 0;
+    const afterDiscount = subtotalVal * (1 - discount / 100);
+    const taxId         = this.headerForm.controls.tax_id.value;
+    const tax           = this.taxes().find((t) => t.id === taxId);
+    const taxAmt        = tax ? afterDiscount * (tax.value / 100) : 0;
+    this.taxAmount.set(taxAmt);
+    this.computedTotal.set(afterDiscount + taxAmt);
   }
 
   protected rowTotal(index: number): number {
@@ -155,9 +180,7 @@ export class QuotationEditComponent implements OnInit {
 
   protected submit(): void {
     const q = this.quotation();
-    if (this.headerForm.invalid || this.itemsForm.invalid || !q) {
-      return;
-    }
+    if (this.headerForm.invalid || this.itemsForm.invalid || !q) return;
 
     this.isSaving.set(true);
     this.errorMessage.set('');
@@ -166,6 +189,9 @@ export class QuotationEditComponent implements OnInit {
     const payload: UpdateQuotationPayload = {
       customer_id: v.customer_id,
       status_id: v.status_id,
+      currency_id: v.currency_id,
+      tax_id: v.tax_id,
+      discount: v.discount,
       date: v.date,
       valid_until: v.valid_until || null,
       notes: v.notes || null,

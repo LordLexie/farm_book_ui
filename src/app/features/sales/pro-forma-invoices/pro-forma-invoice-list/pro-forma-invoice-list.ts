@@ -28,6 +28,7 @@ export class ProFormaInvoiceListComponent implements OnInit {
 
   protected readonly isLoading = signal(true);
   protected readonly isConverting = signal<number | null>(null);
+  protected readonly printingId = signal<number | null>(null);
   protected readonly items = signal<ProFormaInvoice[]>([]);
   protected readonly totalItems = signal(0);
   protected readonly pageSize = signal(15);
@@ -94,5 +95,19 @@ export class ProFormaInvoiceListComponent implements OnInit {
 
   protected isActive(item: ProFormaInvoice): boolean {
     return item.status?.code === 'ACT';
+  }
+
+  protected printProForma(item: ProFormaInvoice): void {
+    this.printingId.set(item.id);
+    this.service.getPrintUrl(item.id).subscribe({
+      next: ({ url }) => {
+        this.printingId.set(null);
+        window.open(url, '_blank');
+      },
+      error: () => {
+        this.printingId.set(null);
+        this.snackBar.open('Failed to get print URL.', 'Dismiss', { duration: 4000 });
+      },
+    });
   }
 }

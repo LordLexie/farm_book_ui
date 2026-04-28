@@ -31,6 +31,7 @@ export class InvoiceListComponent implements OnInit {
   protected readonly totalItems = signal(0);
   protected readonly pageSize = signal(15);
   protected readonly pageIndex = signal(0);
+  protected readonly printingId = signal<number | null>(null);
   protected readonly pageSizeOptions = [10, 15, 25, 50];
   protected readonly displayedColumns = ['code', 'date', 'customer', 'items', 'total', 'balance', 'status', 'actions'];
 
@@ -86,5 +87,19 @@ export class InvoiceListComponent implements OnInit {
 
   protected isActive(item: Invoice): boolean {
     return item.status?.code === 'ACT';
+  }
+
+  protected printInvoice(item: Invoice): void {
+    this.printingId.set(item.id);
+    this.invoiceService.getPrintUrl(item.id).subscribe({
+      next: ({ url }) => {
+        this.printingId.set(null);
+        window.open(url, '_blank');
+      },
+      error: () => {
+        this.printingId.set(null);
+        this.snackBar.open('Failed to get print URL.', 'Dismiss', { duration: 4000 });
+      },
+    });
   }
 }

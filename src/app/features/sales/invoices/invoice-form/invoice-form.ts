@@ -15,7 +15,7 @@ import {
   InvoiceCurrency,
   InvoiceCustomer,
   InvoiceFarmItem,
-  InvoiceService as InvoiceServiceType,
+  InvoiceServiceItem,
   InvoiceService,
   InvoiceStatus,
   InvoiceTax,
@@ -59,7 +59,7 @@ export class InvoiceFormComponent implements OnInit {
   protected readonly currencies = signal<InvoiceCurrency[]>([]);
   protected readonly taxes = signal<InvoiceTax[]>([]);
   protected readonly farmItems = signal<InvoiceFarmItem[]>([]);
-  protected readonly services = signal<InvoiceServiceType[]>([]);
+  protected readonly services = signal<InvoiceServiceItem[]>([]);
   protected readonly unitOfMeasures = signal<InvoiceUnitOfMeasure[]>([]);
   protected readonly subtotal = signal(0);
   protected readonly taxAmount = signal(0);
