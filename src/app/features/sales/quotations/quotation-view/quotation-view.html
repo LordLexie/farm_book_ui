@@ -14,6 +14,14 @@
       <mat-icon>edit</mat-icon>
       Edit
     </button>
+    <button mat-flat-button color="primary" [disabled]="isConverting()" (click)="convert()">
+      @if (isConverting()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        <mat-icon>swap_horiz</mat-icon>
+      }
+      {{ isConverting() ? '' : 'Convert to Invoice' }}
+    </button>
   }
 </div>
 

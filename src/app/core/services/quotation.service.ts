@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Invoice } from './invoice.service';
 
 export interface PaginationMeta {
   current_page: number;
@@ -124,6 +125,10 @@ export class QuotationService {
 
   getPrintUrl(id: number): Observable<{ url: string }> {
     return this.http.get<{ url: string }>(`/api/v1/quotations/${id}/print-url`);
+  }
+
+  convert(id: number): Observable<{ invoice: Invoice }> {
+    return this.http.post<{ invoice: Invoice }>(`/api/v1/quotations/${id}/convert`, {});
   }
 
   getCustomers(): Observable<{ customers: QuotationCustomer[] }> {

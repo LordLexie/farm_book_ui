@@ -32,6 +32,7 @@ export class QuotationListComponent implements OnInit {
   protected readonly pageSize = signal(15);
   protected readonly pageIndex = signal(0);
   protected readonly printingId = signal<number | null>(null);
+  protected readonly isConverting = signal<number | null>(null);
   protected readonly pageSizeOptions = [10, 15, 25, 50];
   protected readonly displayedColumns = ['code', 'date', 'customer', 'items', 'total', 'valid_until', 'status', 'actions'];
 
@@ -87,6 +88,21 @@ export class QuotationListComponent implements OnInit {
 
   protected isActive(item: Quotation): boolean {
     return item.status?.code === 'ACT';
+  }
+
+  protected convert(item: Quotation): void {
+    this.isConverting.set(item.id);
+    this.quotationService.convert(item.id).subscribe({
+      next: (res) => {
+        this.isConverting.set(null);
+        this.snackBar.open('Converted to invoice ' + res.invoice.code, undefined, { duration: 4000 });
+        this.router.navigate(['/sales/invoices', res.invoice.id]);
+      },
+      error: () => {
+        this.isConverting.set(null);
+        this.snackBar.open('Failed to convert quotation.', 'Dismiss', { duration: 4000 });
+      },
+    });
   }
 
   protected printQuotation(item: Quotation): void {
