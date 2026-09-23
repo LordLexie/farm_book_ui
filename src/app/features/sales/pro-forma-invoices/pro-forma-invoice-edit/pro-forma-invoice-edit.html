@@ -124,29 +124,38 @@
               <mat-select formControlName="invoiceable_type" placeholder="Type" (selectionChange)="onTypeChange(i)">
                 <mat-option value="farm_item">Farm Item</mat-option>
                 <mat-option value="service">Service</mat-option>
+                <mat-option value="custom">Custom</mat-option>
               </mat-select>
-              @if (rows.at(i).get('invoiceable_type')?.hasError('required') && rows.at(i).get('invoiceable_type')?.touched) {
-                <mat-error>Required</mat-error>
-              }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="col-item">
-              <mat-select formControlName="invoiceable_id" placeholder="Select item" (selectionChange)="onItemChange(i)">
-                @if (getRowType(i) === 'farm_item') {
-                  @for (fi of farmItems(); track fi.id) {
-                    <mat-option [value]="fi.id">{{ fi.name }}</mat-option>
+            @if (getRowType(i) === 'custom') {
+              <div class="col-item item-picker">
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="name" placeholder="Item name" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="description" placeholder="Description (optional)" />
+                </mat-form-field>
+              </div>
+            } @else {
+              <mat-form-field appearance="outline" class="col-item">
+                <mat-select formControlName="invoiceable_id" placeholder="Select item" (selectionChange)="onItemChange(i)">
+                  @if (getRowType(i) === 'farm_item') {
+                    @for (fi of farmItems(); track fi.id) {
+                      <mat-option [value]="fi.id">{{ fi.name }}</mat-option>
+                    }
                   }
-                }
-                @if (getRowType(i) === 'service') {
-                  @for (svc of services(); track svc.id) {
-                    <mat-option [value]="svc.id">{{ svc.name }}</mat-option>
+                  @if (getRowType(i) === 'service') {
+                    @for (svc of services(); track svc.id) {
+                      <mat-option [value]="svc.id">{{ svc.name }}</mat-option>
+                    }
                   }
+                </mat-select>
+                @if (rows.at(i).get('invoiceable_id')?.hasError('required') && rows.at(i).get('invoiceable_id')?.touched) {
+                  <mat-error>Required</mat-error>
                 }
-              </mat-select>
-              @if (rows.at(i).get('invoiceable_id')?.hasError('required') && rows.at(i).get('invoiceable_id')?.touched) {
-                <mat-error>Required</mat-error>
-              }
-            </mat-form-field>
+              </mat-form-field>
+            }
 
             <mat-form-field appearance="outline" class="col-qty">
               <input matInput type="number" formControlName="quantity" placeholder="0" min="0" />

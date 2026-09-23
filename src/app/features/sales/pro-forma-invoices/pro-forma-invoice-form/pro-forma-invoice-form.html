@@ -100,41 +100,53 @@
           <div formArrayName="rows">
             @for (row of rows.controls; track $index; let i = $index) {
               <div [formGroupName]="i" class="item-row">
-                <mat-form-field appearance="outline" class="col-item">
-                  <mat-select formControlName="item_key" placeholder="Select item"
-                              (selectionChange)="onItemKeyChange(i, $event.value)"
-                              (openedChange)="!$event && itemSearch.set('')">
-                    <div class="select-search-wrapper">
-                      <input
-                        #itemSearchInput
-                        class="select-search-input"
-                        placeholder="Search items and services..."
-                        autocomplete="off"
-                        (input)="itemSearch.set(itemSearchInput.value)"
-                        (click)="$event.stopPropagation()"
-                        (mousedown)="$event.stopPropagation()"
-                        (keydown)="$event.stopPropagation()"
-                      />
-                    </div>
-                    @if (filteredCombinedItems().farmItems.length) {
-                      <mat-optgroup label="Farm Items">
-                        @for (fi of filteredCombinedItems().farmItems; track fi.id) {
-                          <mat-option value="farm_item:{{ fi.id }}">{{ fi.name }}</mat-option>
-                        }
-                      </mat-optgroup>
+                <div class="col-item item-picker">
+                  <mat-form-field appearance="outline">
+                    <mat-select formControlName="item_key" placeholder="Select item"
+                                (selectionChange)="onItemKeyChange(i, $event.value)"
+                                (openedChange)="!$event && itemSearch.set('')">
+                      <div class="select-search-wrapper">
+                        <input
+                          #itemSearchInput
+                          class="select-search-input"
+                          placeholder="Search items and services..."
+                          autocomplete="off"
+                          (input)="itemSearch.set(itemSearchInput.value)"
+                          (click)="$event.stopPropagation()"
+                          (mousedown)="$event.stopPropagation()"
+                          (keydown)="$event.stopPropagation()"
+                        />
+                      </div>
+                      <mat-option value="custom">✎ Custom item (type manually)</mat-option>
+                      @if (filteredCombinedItems().farmItems.length) {
+                        <mat-optgroup label="Farm Items">
+                          @for (fi of filteredCombinedItems().farmItems; track fi.id) {
+                            <mat-option value="farm_item:{{ fi.id }}">{{ fi.name }}</mat-option>
+                          }
+                        </mat-optgroup>
+                      }
+                      @if (filteredCombinedItems().services.length) {
+                        <mat-optgroup label="Services">
+                          @for (svc of filteredCombinedItems().services; track svc.id) {
+                            <mat-option value="service:{{ svc.id }}">{{ svc.name }}</mat-option>
+                          }
+                        </mat-optgroup>
+                      }
+                    </mat-select>
+                    @if (rows.at(i).get('item_key')?.hasError('required') && rows.at(i).get('item_key')?.touched) {
+                      <mat-error>Required</mat-error>
                     }
-                    @if (filteredCombinedItems().services.length) {
-                      <mat-optgroup label="Services">
-                        @for (svc of filteredCombinedItems().services; track svc.id) {
-                          <mat-option value="service:{{ svc.id }}">{{ svc.name }}</mat-option>
-                        }
-                      </mat-optgroup>
-                    }
-                  </mat-select>
-                  @if (rows.at(i).get('item_key')?.hasError('required') && rows.at(i).get('item_key')?.touched) {
-                    <mat-error>Required</mat-error>
+                  </mat-form-field>
+
+                  @if (isCustomRow(i)) {
+                    <mat-form-field appearance="outline">
+                      <input matInput formControlName="name" placeholder="Item name" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <input matInput formControlName="description" placeholder="Description (optional)" />
+                    </mat-form-field>
                   }
-                </mat-form-field>
+                </div>
 
                 <mat-form-field appearance="outline" class="col-qty">
                   <input matInput type="number" formControlName="quantity" placeholder="0" min="0" />

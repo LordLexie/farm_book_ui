@@ -61,6 +61,12 @@
   flex: 2;
 }
 
+.item-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .col-uom {
   flex: 0 0 90px;
 }

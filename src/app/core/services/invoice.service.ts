@@ -55,8 +55,10 @@ export interface InvoiceTax {
 
 export interface InvoiceItem {
   id: number;
-  invoiceable_type: 'farm_item' | 'service';
-  invoiceable_id: number;
+  invoiceable_type: 'farm_item' | 'service' | null;
+  invoiceable_id: number | null;
+  name: string | null;
+  description: string | null;
   unit_of_measure_id: number;
   quantity: number;
   unit_price: number;
@@ -85,8 +87,10 @@ export interface Invoice {
 }
 
 export interface InvoiceItemPayload {
-  invoiceable_type: 'farm_item' | 'service';
-  invoiceable_id: number;
+  invoiceable_type?: 'farm_item' | 'service' | null;
+  invoiceable_id?: number | null;
+  name?: string | null;
+  description?: string | null;
   unit_of_measure_id: number;
   quantity: number;
   unit_price: number;

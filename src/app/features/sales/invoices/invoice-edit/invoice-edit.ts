@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormArray, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,13 @@ import {
   InvoiceUnitOfMeasure,
   UpdateInvoicePayload,
 } from '../../../../core/services/invoice.service';
+
+function invoiceEditItemRowValidator(group: AbstractControl): ValidationErrors | null {
+  const v = group.value;
+  const hasCatalogItem = (v.invoiceable_type === 'farm_item' || v.invoiceable_type === 'service') && !!v.invoiceable_id;
+  const hasName = v.invoiceable_type === 'custom' && !!v.name && v.name.trim().length > 0;
+  return hasCatalogItem || hasName ? null : { itemRequired: true };
+}
 
 @Component({
   selector: 'app-invoice-edit',
@@ -85,19 +92,30 @@ export class InvoiceEditComponent implements OnInit {
   }
 
   private buildItemRow(
-    type: 'farm_item' | 'service' | '' = '',
+    type: 'farm_item' | 'service' | 'custom' | '' = '',
     invoiceableId: number | '' = '',
     uomId: number | '' = '',
     quantity: number | '' = '',
     unitPrice: number | '' = '',
+    name = '',
+    description = '',
   ) {
-    return this.fb.nonNullable.group({
-      invoiceable_type: [type as 'farm_item' | 'service', [Validators.required]],
-      invoiceable_id: [invoiceableId as unknown as number, [Validators.required]],
-      unit_of_measure_id: [uomId as unknown as number, [Validators.required]],
-      quantity: [quantity as unknown as number, [Validators.required, Validators.min(0)]],
-      unit_price: [unitPrice as unknown as number, [Validators.required, Validators.min(0)]],
-    });
+    return this.fb.nonNullable.group(
+      {
+        invoiceable_type: [type],
+        invoiceable_id: [invoiceableId as unknown as number],
+        name: [name],
+        description: [description],
+        unit_of_measure_id: [uomId as unknown as number, [Validators.required]],
+        quantity: [quantity as unknown as number, [Validators.required, Validators.min(0)]],
+        unit_price: [unitPrice as unknown as number, [Validators.required, Validators.min(0)]],
+      },
+      { validators: invoiceEditItemRowValidator },
+    );
+  }
+
+  protected isCustomRow(index: number): boolean {
+    return this.rows.at(index).get('invoiceable_type')?.value === 'custom';
   }
 
   ngOnInit(): void {
@@ -134,7 +152,15 @@ export class InvoiceEditComponent implements OnInit {
         });
 
         const itemRows = inv.items.map((item) =>
-          this.buildItemRow(item.invoiceable_type, item.invoiceable_id, item.unit_of_measure_id, item.quantity, item.unit_price),
+          this.buildItemRow(
+            item.invoiceable_type ?? 'custom',
+            item.invoiceable_id ?? '',
+            item.unit_of_measure_id,
+            item.quantity,
+            item.unit_price,
+            item.name ?? '',
+            item.description ?? '',
+          ),
         );
         this.itemsForm.setControl('rows', this.fb.array(itemRows.length ? itemRows : [this.buildItemRow()]));
 
@@ -167,13 +193,18 @@ export class InvoiceEditComponent implements OnInit {
     this.computedTotal.set(afterDiscount + taxAmt);
   }
 
-  protected getRowType(index: number): 'farm_item' | 'service' | '' {
+  protected getRowType(index: number): 'farm_item' | 'service' | 'custom' | '' {
     return this.rows.at(index).get('invoiceable_type')?.value ?? '';
   }
 
   protected onTypeChange(index: number): void {
-    this.rows.at(index).get('invoiceable_id')?.setValue('' as unknown as number);
-    this.rows.at(index).get('unit_of_measure_id')?.setValue('' as unknown as number);
+    const row = this.rows.at(index);
+    row.get('invoiceable_id')?.setValue('' as unknown as number);
+    row.get('name')?.setValue('');
+    row.get('description')?.setValue('');
+    if (this.getRowType(index) !== 'custom') {
+      row.get('unit_of_measure_id')?.setValue('' as unknown as number);
+    }
   }
 
   protected onItemChange(index: number): void {
@@ -224,13 +255,23 @@ export class InvoiceEditComponent implements OnInit {
       tax_id: v.tax_id,
       date: v.date,
       discount: v.discount,
-      items: this.rows.getRawValue().map((r) => ({
-        invoiceable_type: r.invoiceable_type,
-        invoiceable_id: r.invoiceable_id,
-        unit_of_measure_id: r.unit_of_measure_id,
-        quantity: r.quantity,
-        unit_price: r.unit_price,
-      })),
+      items: this.rows.getRawValue().map((r) =>
+        r.invoiceable_type === 'custom'
+          ? {
+              name: r.name,
+              description: r.description || null,
+              unit_of_measure_id: r.unit_of_measure_id,
+              quantity: r.quantity,
+              unit_price: r.unit_price,
+            }
+          : {
+              invoiceable_type: r.invoiceable_type,
+              invoiceable_id: r.invoiceable_id,
+              unit_of_measure_id: r.unit_of_measure_id,
+              quantity: r.quantity,
+              unit_price: r.unit_price,
+            },
+      ),
     };
 
     this.invoiceService.update(inv.id, payload).subscribe({

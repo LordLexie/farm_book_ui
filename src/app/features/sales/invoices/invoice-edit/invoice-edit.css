@@ -90,6 +90,12 @@
   flex: 2;
 }
 
+.item-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .col-qty {
   flex: 0 0 80px;
 }

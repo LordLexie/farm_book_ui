@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormArray, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,6 +29,13 @@ import {
 
 export interface ProFormaInvoiceFormResult {
   saved: boolean;
+}
+
+function itemRowValidator(group: AbstractControl): ValidationErrors | null {
+  const v = group.value;
+  const hasCatalogItem = !!v.item_key && v.item_key !== 'custom';
+  const hasName = !!v.name && v.name.trim().length > 0;
+  return hasCatalogItem || hasName ? null : { itemRequired: true };
 }
 
 @Component({
@@ -102,14 +109,23 @@ export class ProFormaInvoiceFormComponent implements OnInit {
   }
 
   private buildItemRow() {
-    return this.fb.nonNullable.group({
-      item_key: ['', [Validators.required]],
-      invoiceable_type: ['' as 'farm_item' | 'service'],
-      invoiceable_id: ['' as unknown as number],
-      unit_of_measure_id: ['' as unknown as number, [Validators.required]],
-      quantity: ['' as unknown as number, [Validators.required, Validators.min(0)]],
-      unit_price: ['' as unknown as number, [Validators.required, Validators.min(0)]],
-    });
+    return this.fb.nonNullable.group(
+      {
+        item_key: [''],
+        invoiceable_type: ['' as 'farm_item' | 'service' | ''],
+        invoiceable_id: ['' as unknown as number],
+        name: [''],
+        description: [''],
+        unit_of_measure_id: ['' as unknown as number, [Validators.required]],
+        quantity: ['' as unknown as number, [Validators.required, Validators.min(0)]],
+        unit_price: ['' as unknown as number, [Validators.required, Validators.min(0)]],
+      },
+      { validators: itemRowValidator },
+    );
+  }
+
+  protected isCustomRow(index: number): boolean {
+    return this.rows.at(index).get('item_key')?.value === 'custom';
   }
 
   ngOnInit(): void {
@@ -164,10 +180,20 @@ export class ProFormaInvoiceFormComponent implements OnInit {
   }
 
   protected onItemKeyChange(index: number, key: string): void {
+    const row = this.rows.at(index);
+
+    if (key === 'custom') {
+      row.patchValue({ invoiceable_type: '', invoiceable_id: '' as unknown as number });
+      if (!row.get('unit_of_measure_id')?.value) {
+        const uomId = this.unitOfMeasures()[0]?.id;
+        if (uomId) row.get('unit_of_measure_id')?.setValue(uomId);
+      }
+      return;
+    }
+
     const [type, idStr] = key.split(':');
     const id = Number(idStr);
-    const row = this.rows.at(index);
-    row.patchValue({ invoiceable_type: type as 'farm_item' | 'service', invoiceable_id: id });
+    row.patchValue({ invoiceable_type: type as 'farm_item' | 'service', invoiceable_id: id, name: '', description: '' });
 
     let uomId: number | undefined;
     if (type === 'service') {
@@ -242,13 +268,23 @@ export class ProFormaInvoiceFormComponent implements OnInit {
       tax_id: v.tax_id,
       date: v.date,
       discount: v.discount,
-      items: this.rows.getRawValue().map((r) => ({
-        invoiceable_type: r.invoiceable_type,
-        invoiceable_id: r.invoiceable_id,
-        unit_of_measure_id: r.unit_of_measure_id,
-        quantity: r.quantity,
-        unit_price: r.unit_price,
-      })),
+      items: this.rows.getRawValue().map((r) =>
+        r.item_key === 'custom'
+          ? {
+              name: r.name,
+              description: r.description || null,
+              unit_of_measure_id: r.unit_of_measure_id,
+              quantity: r.quantity,
+              unit_price: r.unit_price,
+            }
+          : {
+              invoiceable_type: r.invoiceable_type,
+              invoiceable_id: r.invoiceable_id,
+              unit_of_measure_id: r.unit_of_measure_id,
+              quantity: r.quantity,
+              unit_price: r.unit_price,
+            },
+      ),
     };
 
     this.service.create(payload).subscribe({

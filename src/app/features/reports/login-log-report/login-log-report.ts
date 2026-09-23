@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DecimalPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -22,7 +22,7 @@ interface StatCard {
 @Component({
   selector: 'app-login-log-report',
   imports: [
-    FormsModule, DecimalPipe, DatePipe,
+    FormsModule, DatePipe,
     MatCardModule, MatIconModule, MatProgressSpinnerModule,
     MatTableModule, MatPaginatorModule,
     MatSelectModule, MatFormFieldModule, MatInputModule, MatButtonModule,
