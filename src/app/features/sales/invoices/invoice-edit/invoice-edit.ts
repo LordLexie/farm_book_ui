@@ -204,6 +204,9 @@ export class InvoiceEditComponent implements OnInit {
     row.get('description')?.setValue('');
     if (this.getRowType(index) !== 'custom') {
       row.get('unit_of_measure_id')?.setValue('' as unknown as number);
+    } else if (!row.get('unit_of_measure_id')?.value) {
+      const uomId = this.unitOfMeasures()[0]?.id;
+      if (uomId) row.get('unit_of_measure_id')?.setValue(uomId);
     }
   }
 
