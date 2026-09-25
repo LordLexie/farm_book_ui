@@ -63,7 +63,7 @@
   align-items: center;
   gap: 8px;
   padding: 0 0 4px;
-  min-width: 700px;
+  min-width: 800px;
 }
 
 .col-label {
@@ -79,7 +79,7 @@
   align-items: flex-start;
   gap: 8px;
   margin-bottom: 4px;
-  min-width: 700px;
+  min-width: 800px;
 }
 
 .col-type {
@@ -94,6 +94,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.col-uom {
+  flex: 0 0 90px;
 }
 
 .col-qty {

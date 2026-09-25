@@ -110,6 +110,7 @@
     <div class="items-header-row">
       <span class="col-label col-type">Type</span>
       <span class="col-label col-item">Item</span>
+      <span class="col-label col-uom">Unit</span>
       <span class="col-label col-qty">Qty</span>
       <span class="col-label col-price">Unit Price</span>
       <span class="col-label col-total">Total</span>
@@ -156,6 +157,17 @@
                 }
               </mat-form-field>
             }
+
+            <mat-form-field appearance="outline" class="col-uom">
+              <mat-select formControlName="unit_of_measure_id" placeholder="Unit">
+                @for (uom of unitOfMeasures(); track uom.id) {
+                  <mat-option [value]="uom.id">{{ uom.code }}</mat-option>
+                }
+              </mat-select>
+              @if (rows.at(i).get('unit_of_measure_id')?.hasError('required') && rows.at(i).get('unit_of_measure_id')?.touched) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
 
             <mat-form-field appearance="outline" class="col-qty">
               <input matInput type="number" formControlName="quantity" placeholder="0" min="0" />
