@@ -10,6 +10,17 @@
       <mat-icon>print</mat-icon>
       Print
     </button>
+    @if (auth.hasPermission('manage delivery-notes')) {
+      <button
+        mat-stroked-button
+        (click)="createDeliveryNote()"
+        [disabled]="creatingDn()"
+        matTooltip="Create a delivery note from this invoice"
+      >
+        <mat-icon>local_shipping</mat-icon>
+        {{ creatingDn() ? 'Creating…' : 'Delivery Note' }}
+      </button>
+    }
     <button mat-stroked-button (click)="router.navigate(['/sales/invoices', invoice()!.id, 'edit'])">
       <mat-icon>edit</mat-icon>
       Edit

@@ -1,0 +1,161 @@
+<div class="print-btn-wrap">
+  <button class="back-btn" (click)="back()">&larr; Back</button>
+  @if (note()) {
+    <button class="print-btn" (click)="print()">&#128438; Print / Save PDF</button>
+  }
+</div>
+
+@if (note(); as n) {
+  <div class="document" [class.cancelled]="n.status === 'cancelled'">
+    @if (n.status === 'cancelled') {
+      <div class="watermark">CANCELLED</div>
+    }
+    <!-- Header -->
+    <div class="doc-header">
+      <div class="header-left">
+        <img src="rtl-logo.png" alt="Rilip Traders Limited" class="header-logo" />
+        <div class="header-company">
+          <p><strong>Rilip Traders Limited</strong></p>
+          <p>P.O Box 31404 - 00600</p>
+          <p>Nairobi, Kenya</p>
+          <p>+254768858398 &nbsp;|&nbsp; +254713622269</p>
+          <p>info&#64;riliptraders.co.ke</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="doc-type">DELIVERY NOTE</div>
+        <div class="doc-subtype">Goods Dispatch</div>
+      </div>
+    </div>
+
+    <!-- Meta bar -->
+    <div class="doc-meta">
+      <div class="meta-cell">
+        <div class="meta-label">DN No.</div>
+        <div class="meta-value">{{ n.code }}</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Date</div>
+        <div class="meta-value">{{ n.date.slice(0, 10) | date: 'dd MMM yyyy' }}</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Invoice Ref</div>
+        <div class="meta-value">{{ n.invoice?.code ?? '—' }}</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-label">Vehicle</div>
+        <div class="meta-value">{{ n.vehicle_reg ?? '—' }}</div>
+      </div>
+    </div>
+
+    <!-- Addresses -->
+    <div class="doc-addresses">
+      <div>
+        <div class="address-label">From</div>
+        <div class="address-name">Rilip Traders Limited</div>
+        <div class="address-body">
+          P.O Box 31404 - 00600<br />
+          Nairobi, Kenya<br />
+          +254768858398 | +254713622269<br />
+          info&#64;riliptraders.co.ke
+        </div>
+      </div>
+      <div>
+        <div class="address-label">Deliver To</div>
+        <div class="address-name">{{ n.customer?.name }}</div>
+        <div class="address-body">
+          @if (n.delivery_address) {
+            {{ n.delivery_address }}<br />
+          }
+          @if (n.contact_person) {
+            Attn: {{ n.contact_person }}<br />
+          }
+          {{ n.contact_phone ?? '' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="doc-table-wrap">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th style="width: 6%">#</th>
+            <th style="width: 46%">Description</th>
+            <th style="width: 14%">Unit</th>
+            <th class="text-right" style="width: 17%">Qty</th>
+            <th class="text-right" style="width: 17%">Qty Received</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of n.items; track $index) {
+            <tr>
+              <td class="text-right" style="color: #888; font-size: 12px">{{ $index + 1 }}</td>
+              <td>
+                <div class="item-name">{{ item.name }}</div>
+                @if (item.description) {
+                  <div class="item-desc">{{ item.description }}</div>
+                }
+              </td>
+              <td>{{ item.unit_of_measure?.name ?? '—' }}</td>
+              <td class="text-right">{{ item.qty_ordered | number }}</td>
+              <td class="text-right"><span class="fill-line"></span></td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            <td>Total</td>
+            <td></td>
+            <td class="text-right">{{ totalQty() | number }}</td>
+            <td class="text-right"><span class="fill-line"></span></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Notes -->
+    <div class="doc-notes">
+      @if (n.notes) {
+        <strong>Notes:</strong> {{ n.notes }}<br />
+      }
+      Goods received in good order and condition. Any shortages or damage must be noted below before signing.
+    </div>
+
+    <!-- Signatures -->
+    <div class="doc-signatures">
+      <div>
+        <div class="address-label">Dispatched By</div>
+        <div class="sig-row">
+          <span class="sig-label">Name</span><span class="sig-value">{{ n.delivered_by ?? '' }}</span>
+        </div>
+        <div class="sig-row"><span class="sig-label">Signature</span><span class="sig-value"></span></div>
+        <div class="sig-row">
+          <span class="sig-label">Date</span><span class="sig-value"></span>
+        </div>
+      </div>
+      <div>
+        <div class="address-label">Received By</div>
+        <div class="sig-row">
+          <span class="sig-label">Name</span><span class="sig-value"></span>
+        </div>
+        <div class="sig-row"><span class="sig-label">Signature</span><span class="sig-value"></span></div>
+        <div class="sig-row">
+          <span class="sig-label">Date</span><span class="sig-value"></span>
+        </div>
+        <div class="stamp-box">Customer stamp</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="doc-footer">
+      <div class="footer-cell"><span class="footer-icon">&#9990;</span> +254768858398</div>
+      <div class="footer-cell"><span class="footer-icon">&#9990;</span> +254713622269</div>
+      <div class="footer-cell"><span class="footer-icon">&#9993;</span> info&#64;riliptraders.co.ke</div>
+      <div class="footer-cell"><span class="footer-icon">&#127760;</span> www.riliptraders.co.ke</div>
+    </div>
+  </div>
+} @else if (!isLoading()) {
+  <div class="not-found">Delivery note not found.</div>
+}

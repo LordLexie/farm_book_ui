@@ -1,0 +1,370 @@
+:host, :host * { box-sizing: border-box; }
+
+:host {
+    display: block;
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: #e8e8e8;
+}
+
+:host p, :host h1, :host h2, :host table { margin: 0; padding: 0; }
+
+
+.print-btn-wrap {
+    text-align: center;
+    padding: 16px;
+}
+
+.print-btn {
+    background: #1b6b5a;
+    color: #fff;
+    border: none;
+    padding: 10px 32px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+
+.print-btn:hover { background: #145449; }
+
+.document {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 32px;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Header ── */
+.doc-header {
+    background: #1b6b5a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.header-logo {
+    height: 80px;
+    width: auto;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.header-company p {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.88;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.header-right .doc-type {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+
+.header-right .doc-subtype {
+    font-size: 15px;
+    opacity: 0.8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* ── Meta bar ── */
+.doc-meta {
+    background: #145449;
+    color: #fff;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.meta-cell {
+    padding: 10px 16px;
+    border-right: 1px solid rgba(255,255,255,0.12);
+}
+
+.meta-cell:last-child { border-right: none; }
+
+.meta-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    margin-bottom: 3px;
+}
+
+.meta-value {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ── Address block ── */
+.doc-addresses {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 24px 32px;
+    gap: 32px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.address-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #1b6b5a;
+    border-bottom: 2px solid #1b6b5a;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+}
+
+.address-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1b6b5a;
+    margin-bottom: 6px;
+}
+
+.address-body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #444;
+}
+
+/* ── Items table ── */
+.doc-table-wrap {
+    padding: 0 32px;
+    margin-top: 8px;
+}
+
+.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.doc-table thead tr {
+    background: #1b6b5a;
+    color: #fff;
+}
+
+.doc-table thead th {
+    padding: 10px 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.doc-table thead th.text-right { text-align: right; }
+
+.doc-table tbody tr:nth-child(even) {
+    background: #f7faf9;
+}
+
+.doc-table tbody td {
+    padding: 10px 12px;
+    vertical-align: top;
+    border-bottom: 1px solid #eee;
+}
+
+.doc-table tbody td.text-right { text-align: right; }
+
+.item-name {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.item-desc {
+    font-size: 13px;
+    color: #777;
+    margin-top: 2px;
+}
+
+/* ── Totals ── */
+
+
+
+
+
+
+
+
+
+/* ── Footer ── */
+.doc-footer {
+    margin-top: auto;
+    background: #1b6b5a;
+    color: rgba(255,255,255,0.85);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 12px 32px;
+    gap: 8px;
+}
+
+.footer-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.footer-icon {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+
+/* ── Delivery note additions ── */
+.print-btn-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.back-btn {
+    background: #fff;
+    color: #1b6b5a;
+    border: 1px solid #1b6b5a;
+    padding: 10px 24px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.doc-table tfoot td {
+    padding: 10px 12px;
+    font-weight: 700;
+    border-top: 2px solid #1b6b5a;
+}
+
+.doc-table .text-right { text-align: right; }
+
+.fill-line {
+    display: inline-block;
+    width: 70px;
+    border-bottom: 1px solid #999;
+    height: 16px;
+}
+
+
+.doc-notes {
+    margin: 20px 32px 0;
+    padding: 12px 16px;
+    background: #f7faf9;
+    border-left: 4px solid #1b6b5a;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #444;
+}
+
+.doc-notes strong { color: #1b6b5a; }
+
+.doc-signatures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    padding: 28px 32px 32px;
+}
+
+.sig-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #666;
+}
+
+.sig-row .sig-label { width: 70px; flex-shrink: 0; }
+
+.sig-row .sig-value {
+    flex: 1;
+    border-bottom: 1px solid #999;
+    min-height: 20px;
+    color: #1a1a1a;
+    font-weight: 600;
+    padding-bottom: 2px;
+}
+
+.stamp-box {
+    margin-top: 16px;
+    height: 80px;
+    border: 1px dashed #bbb;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.not-found {
+    text-align: center;
+    padding: 64px 16px;
+    color: #666;
+}
+
+@media print {
+    :host { background: #fff; min-height: unset; }
+    .print-btn-wrap { display: none; }
+    .document {
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+        min-height: unset;
+    }
+    @page {
+        size: A4;
+        margin: 0;
+    }
+}
+
+/* Keep the coloured header/table backgrounds when printing. */
+.document { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+@media (max-width: 840px) {
+    .document { width: 100%; }
+}
+
+/* "DELIVERY NOTE" is longer than "INVOICE"; shrink so it fits beside the company block. */
+.header-right .doc-type { font-size: 36px; white-space: nowrap; }
+
+/* Cancelled notes print with a watermark so they can't be used as a valid document. */
+.document { position: relative; }
+
+.watermark {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 110px;
+    font-weight: 800;
+    letter-spacing: 8px;
+    color: rgba(198, 40, 40, 0.18);
+    border: 8px solid rgba(198, 40, 40, 0.18);
+    padding: 8px 32px;
+    pointer-events: none;
+    z-index: 1;
+}

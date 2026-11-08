@@ -116,14 +116,24 @@ export interface UpdateInvoicePayload {
   items?: InvoiceItemPayload[];
 }
 
+export interface InvoiceFilters {
+  customer_id?: number | null;
+  date_from?: string | null;
+  date_to?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class InvoiceService {
   private readonly http = inject(HttpClient);
 
-  getAll(page = 1, perPage = 15): Observable<{ invoices: Invoice[]; meta: PaginationMeta }> {
-    return this.http.get<{ invoices: Invoice[]; meta: PaginationMeta }>('/api/v1/invoices', {
-      params: { page, per_page: perPage },
-    });
+  getAll(page = 1, perPage = 15, filters: InvoiceFilters = {}): Observable<{ invoices: Invoice[]; meta: PaginationMeta }> {
+    const params: Record<string, string | number> = { page, per_page: perPage };
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== null && value !== undefined && value !== '') {
+        params[key] = value;
+      }
+    }
+    return this.http.get<{ invoices: Invoice[]; meta: PaginationMeta }>('/api/v1/invoices', { params });
   }
 
   getById(id: number): Observable<{ invoice: Invoice }> {

@@ -7,6 +7,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Invoice, InvoiceService } from '../../../../core/services/invoice.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { DeliveryNoteActions } from '../../delivery-notes/delivery-note-actions';
 
 @Component({
   selector: 'app-invoice-view',
@@ -18,8 +20,11 @@ export class InvoiceViewComponent implements OnInit {
   private readonly invoiceService = inject(InvoiceService);
   private readonly route = inject(ActivatedRoute);
   protected readonly router = inject(Router);
+  protected readonly auth = inject(AuthService);
+  private readonly deliveryNoteActions = inject(DeliveryNoteActions);
 
   protected readonly isLoading = signal(true);
+  protected readonly creatingDn = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly invoice = signal<Invoice | null>(null);
   protected readonly itemColumns = ['type', 'item', 'qty', 'unit_price', 'total'];
@@ -39,6 +44,13 @@ export class InvoiceViewComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  protected createDeliveryNote(): void {
+    const inv = this.invoice();
+    if (!inv) return;
+    this.creatingDn.set(true);
+    this.deliveryNoteActions.createFromInvoice(inv.id, () => this.creatingDn.set(false));
   }
 
   protected isActive(): boolean {

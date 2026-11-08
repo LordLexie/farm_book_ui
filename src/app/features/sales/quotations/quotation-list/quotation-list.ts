@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DecimalPipe, SlicePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -7,15 +7,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Quotation, QuotationService } from '../../../../core/services/quotation.service';
+import { Quotation, QuotationCustomer, QuotationService } from '../../../../core/services/quotation.service';
 import { QuotationFormComponent, QuotationFormResult } from '../quotation-form/quotation-form';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-quotation-list',
-  imports: [DecimalPipe, SlicePipe, MatTableModule, MatButtonModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatPaginatorModule],
+  imports: [DecimalPipe, SlicePipe, MatTableModule, MatButtonModule, MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './quotation-list.html',
   styleUrl: './quotation-list.css',
 })
@@ -36,13 +39,46 @@ export class QuotationListComponent implements OnInit {
   protected readonly pageSizeOptions = [10, 15, 25, 50];
   protected readonly displayedColumns = ['code', 'date', 'customer', 'items', 'total', 'valid_until', 'status', 'actions'];
 
+  // Filters
+  protected readonly customers = signal<QuotationCustomer[]>([]);
+  protected readonly customerSearch = signal('');
+  protected readonly filteredCustomers = computed(() => {
+    const q = this.customerSearch().toLowerCase();
+    return q ? this.customers().filter((c) => c.name.toLowerCase().includes(q)) : this.customers();
+  });
+  protected readonly customerId = signal<number | null>(null);
+  protected readonly dateFrom = signal('');
+  protected readonly dateTo = signal('');
+  protected readonly hasFilters = computed(() => !!this.customerId() || !!this.dateFrom() || !!this.dateTo());
+
   ngOnInit(): void {
+    this.quotationService.getCustomers().subscribe({
+      next: (res) => this.customers.set(res.customers),
+    });
     this.loadData();
+  }
+
+  protected onFilterChange(): void {
+    this.pageIndex.set(0);
+    this.loadData();
+  }
+
+  protected clearFilters(): void {
+    this.customerId.set(null);
+    this.dateFrom.set('');
+    this.dateTo.set('');
+    this.onFilterChange();
   }
 
   private loadData(): void {
     this.isLoading.set(true);
-    this.quotationService.getAll(this.pageIndex() + 1, this.pageSize()).subscribe({
+    this.quotationService
+      .getAll(this.pageIndex() + 1, this.pageSize(), {
+        customer_id: this.customerId(),
+        date_from: this.dateFrom(),
+        date_to: this.dateTo(),
+      })
+      .subscribe({
       next: (res) => {
         this.quotations.set(res.quotations);
         this.totalItems.set(res.meta.total);

@@ -111,3 +111,36 @@
   height: 48px;
   color: rgba(0, 0, 0, 0.2);
 }
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.filter-bar .mat-mdc-form-field {
+  margin-bottom: 0;
+}
+
+.filter-bar ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.filter-client {
+  flex: 1 1 260px;
+  max-width: 360px;
+}
+
+.filter-date {
+  flex: 0 1 180px;
+}
+
+@media (max-width: 600px) {
+  .filter-client,
+  .filter-date {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}

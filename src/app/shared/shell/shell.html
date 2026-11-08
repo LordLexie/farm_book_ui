@@ -116,7 +116,7 @@
         </div>
       }
 
-      @if (auth.hasPermission('view customers') || auth.hasPermission('view quotations') || auth.hasPermission('view invoices') || auth.hasPermission('view payments') || auth.hasPermission('view pro-forma-invoices')) {
+      @if (auth.hasPermission('view customers') || auth.hasPermission('view quotations') || auth.hasPermission('view invoices') || auth.hasPermission('view payments') || auth.hasPermission('view pro-forma-invoices') || auth.hasPermission('view delivery-notes')) {
         <div class="nav-group-toggle" [class.open]="salesOpen" (click)="toggleSales()">
           <mat-icon class="nav-group-icon">point_of_sale</mat-icon>
           <span class="nav-group-label">Sales</span>
@@ -146,6 +146,12 @@
             <a mat-list-item routerLink="/sales/invoices" routerLinkActive="active-link" (click)="closeOnMobile()">
               <mat-icon matListItemIcon>description</mat-icon>
               <span matListItemTitle>Invoices</span>
+            </a>
+          }
+          @if (auth.hasPermission('view delivery-notes')) {
+            <a mat-list-item routerLink="/sales/delivery-notes" routerLinkActive="active-link" (click)="closeOnMobile()">
+              <mat-icon matListItemIcon>local_shipping</mat-icon>
+              <span matListItemTitle>Delivery Notes</span>
             </a>
           }
           @if (auth.hasPermission('view payments')) {

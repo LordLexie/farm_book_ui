@@ -101,14 +101,24 @@ export interface UpdateQuotationPayload {
   items?: QuotationItemPayload[];
 }
 
+export interface QuotationFilters {
+  customer_id?: number | null;
+  date_from?: string | null;
+  date_to?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class QuotationService {
   private readonly http = inject(HttpClient);
 
-  getAll(page = 1, perPage = 15): Observable<{ quotations: Quotation[]; meta: PaginationMeta }> {
-    return this.http.get<{ quotations: Quotation[]; meta: PaginationMeta }>('/api/v1/quotations', {
-      params: { page, per_page: perPage },
-    });
+  getAll(page = 1, perPage = 15, filters: QuotationFilters = {}): Observable<{ quotations: Quotation[]; meta: PaginationMeta }> {
+    const params: Record<string, string | number> = { page, per_page: perPage };
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== null && value !== undefined && value !== '') {
+        params[key] = value;
+      }
+    }
+    return this.http.get<{ quotations: Quotation[]; meta: PaginationMeta }>('/api/v1/quotations', { params });
   }
 
   getById(id: number): Observable<{ quotation: Quotation }> {

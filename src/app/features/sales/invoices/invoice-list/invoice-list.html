@@ -11,10 +11,74 @@
   }
 </div>
 
+<div class="filter-bar">
+  <mat-form-field appearance="outline" class="filter-client">
+    <mat-label>Client</mat-label>
+    <mat-select
+      [value]="customerId()"
+      (selectionChange)="customerId.set($event.value); onFilterChange()"
+      (openedChange)="!$event && customerSearch.set('')"
+    >
+      <div class="select-search-wrapper">
+        <input
+          #customerSearchInput
+          class="select-search-input"
+          placeholder="Search clients..."
+          autocomplete="off"
+          [value]="customerSearch()"
+          (input)="customerSearch.set(customerSearchInput.value)"
+          (click)="$event.stopPropagation()"
+          (mousedown)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
+        />
+      </div>
+      <mat-option [value]="null">All clients</mat-option>
+      @for (c of filteredCustomers(); track c.id) {
+        <mat-option [value]="c.id">{{ c.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-date">
+    <mat-label>From</mat-label>
+    <input
+      matInput
+      type="date"
+      [value]="dateFrom()"
+      [max]="dateTo() || null"
+      (change)="dateFrom.set($any($event.target).value); onFilterChange()"
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="filter-date">
+    <mat-label>To</mat-label>
+    <input
+      matInput
+      type="date"
+      [value]="dateTo()"
+      [min]="dateFrom() || null"
+      (change)="dateTo.set($any($event.target).value); onFilterChange()"
+    />
+  </mat-form-field>
+
+  @if (hasFilters()) {
+    <button mat-stroked-button class="filter-clear" (click)="clearFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Clear
+    </button>
+  }
+</div>
+
 <div class="table-card">
   @if (isLoading()) {
     <div class="loading-state">
       <mat-spinner diameter="40" />
+    </div>
+  } @else if (invoices().length === 0 && hasFilters()) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">filter_alt</mat-icon>
+      <p>No invoices match these filters.</p>
+      <button mat-stroked-button color="primary" (click)="clearFilters()">Clear filters</button>
     </div>
   } @else if (invoices().length === 0) {
     <div class="empty-state">
@@ -101,6 +165,12 @@
             <button mat-menu-item (click)="printInvoice(item)" [disabled]="printingId() === item.id">
               <mat-icon>print</mat-icon> {{ printingId() === item.id ? 'Loading...' : 'Print' }}
             </button>
+            @if (auth.hasPermission('manage delivery-notes')) {
+              <button mat-menu-item (click)="createDeliveryNote(item)" [disabled]="creatingDnId() === item.id">
+                <mat-icon>local_shipping</mat-icon>
+                {{ creatingDnId() === item.id ? 'Creating…' : 'Create delivery note' }}
+              </button>
+            }
           </mat-menu>
         </td>
       </ng-container>

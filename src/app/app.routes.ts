@@ -11,6 +11,15 @@ export const routes: Routes = [
       import('./features/auth/login/login').then((m) => m.LoginComponent),
   },
   {
+    // Print layout sits outside the shell so it has no sidebar/toolbar.
+    path: 'sales/delivery-notes/:id/print',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/sales/delivery-notes/delivery-note-print/delivery-note-print').then(
+        (m) => m.DeliveryNotePrintComponent,
+      ),
+  },
+  {
     path: '',
     component: ShellComponent,
     canActivate: [authGuard],
@@ -233,6 +242,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/sales/invoices/invoice-list/invoice-list').then(
             (m) => m.InvoiceListComponent,
+          ),
+      },
+      {
+        path: 'sales/delivery-notes',
+        canActivate: [permissionGuard],
+        data: { permission: 'view delivery-notes' },
+        loadComponent: () =>
+          import('./features/sales/delivery-notes/delivery-note-list/delivery-note-list').then(
+            (m) => m.DeliveryNoteListComponent,
+          ),
+      },
+      {
+        path: 'sales/delivery-notes/:id',
+        canActivate: [permissionGuard],
+        data: { permission: 'view delivery-notes' },
+        loadComponent: () =>
+          import('./features/sales/delivery-notes/delivery-note-view/delivery-note-view').then(
+            (m) => m.DeliveryNoteViewComponent,
           ),
       },
       {
