@@ -3,9 +3,9 @@
   <p class="page-subtitle">Welcome to Farm Management</p>
 
   @if (auth.hasPermission('view reports')) {
-    <div class="stats-grid">
+    <div class="stats-grid stats-grid--three">
       @if (isLoadingStats()) {
-        @for (i of [1,2,3,4,5,6,7,8]; track i) {
+        @for (i of [1,2,3]; track i) {
           <mat-card class="stat-card stat-card--skeleton">
             <mat-card-content>
               <div class="stat-content">
@@ -29,6 +29,9 @@
                 <div class="stat-info">
                   <span class="stat-value">{{ stat.value }}</span>
                   <span class="stat-label">{{ stat.label }}</span>
+                  @if (stat.sub) {
+                    <span class="stat-sub">{{ stat.sub }}</span>
+                  }
                 </div>
               </div>
             </mat-card-content>
@@ -37,29 +40,42 @@
       }
     </div>
 
-    <div class="section-label">Analytics & Activity</div>
+    <div class="section-header">
+      <div class="section-label">Invoices</div>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="year-select">
+        <mat-label>Year</mat-label>
+        <mat-select [value]="selectedYear()" (selectionChange)="onYearChange($event.value)">
+          @for (y of years(); track y) {
+            <mat-option [value]="y">{{ y }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-    <div class="panels-grid">
-      <!-- Milk Production Trend -->
+    <div class="invoice-grid">
+      <!-- Monthly invoice bar chart -->
       <mat-card class="panel-card">
         <mat-card-content>
           <div class="panel-header">
-            <mat-icon class="panel-icon">show_chart</mat-icon>
+            <mat-icon class="panel-icon">bar_chart</mat-icon>
             <div>
-              <div class="panel-title">Milk Production Trend</div>
-              <div class="panel-subtitle">Last 30 days</div>
+              <div class="panel-title">Invoices by Month</div>
+              <div class="panel-subtitle">{{ selectedYear() }} · Total {{ yearTotal() | number:'1.0-0' }}</div>
             </div>
           </div>
-          @if (isLoadingPanels()) {
+          @if (isLoadingInvoices()) {
             <div class="panel-loading"><mat-spinner diameter="24" /></div>
-          } @else if (milkTrend().length === 0) {
-            <div class="panel-empty"><span>No production recorded</span></div>
+          } @else if (yearTotal() === 0) {
+            <div class="panel-empty"><span>No invoices in {{ selectedYear() }}</span></div>
           } @else {
-            <div class="panel-list">
-              @for (item of milkTrend().slice(-6); track item.date) {
-                <div class="panel-list-row">
-                  <span class="panel-list-label">{{ item.date }}</span>
-                  <span class="panel-list-value">{{ item.quantity | number:'1.0-1' }} L</span>
+            <div class="bar-chart" role="img" [attr.aria-label]="'Monthly invoice totals for ' + selectedYear()">
+              @for (bar of bars(); track bar.month) {
+                <div class="bar-col" [title]="bar.month + ': ' + (bar.total | number:'1.0-0') + ' (' + bar.count + ' invoices)'">
+                  <span class="bar-value">{{ bar.total > 0 ? (bar.total | number:'1.0-0') : '' }}</span>
+                  <div class="bar-track">
+                    <div class="bar" [style.height.%]="bar.pct"></div>
+                  </div>
+                  <span class="bar-label">{{ bar.month }}</span>
                 </div>
               }
             </div>
@@ -67,78 +83,33 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Expense Breakdown -->
+      <!-- Clients by invoice value -->
       <mat-card class="panel-card">
         <mat-card-content>
           <div class="panel-header">
-            <mat-icon class="panel-icon">pie_chart</mat-icon>
+            <mat-icon class="panel-icon">leaderboard</mat-icon>
             <div>
-              <div class="panel-title">Expense Breakdown</div>
-              <div class="panel-subtitle">This month by category</div>
+              <div class="panel-title">Clients by Invoice Value</div>
+              <div class="panel-subtitle">{{ selectedYear() }}</div>
             </div>
           </div>
-          @if (isLoadingPanels()) {
+          @if (isLoadingInvoices()) {
             <div class="panel-loading"><mat-spinner diameter="24" /></div>
+          } @else if (clients().length === 0) {
+            <div class="panel-empty"><span>No client invoices in {{ selectedYear() }}</span></div>
           } @else {
-            <div class="panel-list">
-              @for (item of expenseBreakdown(); track item.category) {
-                <div class="panel-list-row">
-                  <span class="panel-list-label">{{ item.category }}</span>
-                  <span class="panel-list-value">{{ item.total | number:'1.0-0' }}</span>
-                </div>
-              }
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Recent Milk Sales -->
-      <mat-card class="panel-card">
-        <mat-card-content>
-          <div class="panel-header">
-            <mat-icon class="panel-icon">sell</mat-icon>
-            <div>
-              <div class="panel-title">Recent Milk Sales</div>
-              <div class="panel-subtitle">Last 7 days</div>
-            </div>
-          </div>
-          @if (isLoadingPanels()) {
-            <div class="panel-loading"><mat-spinner diameter="24" /></div>
-          } @else if (recentMilkSales().length === 0) {
-            <div class="panel-empty"><span>No sales in the last 7 days</span></div>
-          } @else {
-            <div class="panel-list">
-              @for (sale of recentMilkSales(); track $index) {
-                <div class="panel-list-row">
-                  <span class="panel-list-label">{{ sale.customer ?? 'Unknown' }}</span>
-                  <span class="panel-list-value">{{ sale.total | number:'1.0-0' }}</span>
-                </div>
-              }
-            </div>
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Recent Purchases -->
-      <mat-card class="panel-card">
-        <mat-card-content>
-          <div class="panel-header">
-            <mat-icon class="panel-icon">shopping_cart</mat-icon>
-            <div>
-              <div class="panel-title">Recent Purchases</div>
-              <div class="panel-subtitle">Last 7 days</div>
-            </div>
-          </div>
-          @if (isLoadingPanels()) {
-            <div class="panel-loading"><mat-spinner diameter="24" /></div>
-          } @else if (recentPurchases().length === 0) {
-            <div class="panel-empty"><span>No purchases in the last 7 days</span></div>
-          } @else {
-            <div class="panel-list">
-              @for (purchase of recentPurchases(); track $index) {
-                <div class="panel-list-row">
-                  <span class="panel-list-label">{{ purchase.supplier ?? 'Unknown' }}</span>
-                  <span class="panel-list-value">{{ purchase.total | number:'1.0-0' }}</span>
+            <div class="client-list">
+              @for (c of clients(); track c.customer_id; let i = $index) {
+                <div class="client-row">
+                  <span class="client-rank">{{ i + 1 }}</span>
+                  <div class="client-main">
+                    <div class="client-line">
+                      <span class="client-name">{{ c.name }}</span>
+                      <span class="client-total">{{ c.total | number:'1.0-0' }}</span>
+                    </div>
+                    <div class="client-bar-track"><div class="client-bar" [style.width.%]="c.pct"></div></div>
+                    <span class="client-count">{{ c.invoice_count }} invoice{{ c.invoice_count === 1 ? '' : 's' }}</span>
+                  </div>
                 </div>
               }
             </div>

@@ -218,3 +218,165 @@
   color: rgba(0, 0, 0, 0.87);
   flex-shrink: 0;
 }
+
+/* ── Admin dashboard: invoices ───────────────────────── */
+.stats-grid--three {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.stat-sub {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 2px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 36px 0 16px;
+}
+
+.section-header .section-label {
+  margin: 0;
+}
+
+.year-select {
+  width: 120px;
+}
+
+.invoice-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 20px;
+}
+
+.bar-chart {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  height: 240px;
+  align-items: end;
+}
+
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+}
+
+.bar-value {
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.54);
+  height: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.bar-track {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.bar {
+  width: 100%;
+  min-height: 0;
+  background: #1565c0;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+}
+
+.bar-col:hover .bar {
+  background: #0d47a1;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-top: 6px;
+}
+
+.client-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.client-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.client-rank {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(21, 101, 192, 0.1);
+  color: #1565c0;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.client-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.client-name {
+  color: rgba(0, 0, 0, 0.87);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.client-total {
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.client-bar-track {
+  height: 6px;
+  margin: 4px 0 2px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.client-bar {
+  height: 100%;
+  background: #1565c0;
+  border-radius: 3px;
+}
+
+.client-count {
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+@media (max-width: 900px) {
+  .invoice-grid {
+    grid-template-columns: 1fr;
+  }
+}

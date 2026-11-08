@@ -4,14 +4,30 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface DashboardSummary {
+  total_clients: number;
   total_livestock: number;
-  todays_milk_litres: number;
-  pending_bills_amount: number;
-  outstanding_invoice_balance: number;
-  overdue_invoices_count: number;
-  unpaid_bills_count: number;
-  monthly_revenue: number;
-  monthly_expenses: number;
+  total_invoices: number;
+  total_invoice_value: number;
+}
+
+export interface InvoiceMonth {
+  month: string;
+  total: number;
+  count: number;
+}
+
+export interface InvoiceClientTotal {
+  customer_id: number;
+  name: string;
+  invoice_count: number;
+  total: number;
+}
+
+export interface InvoiceYearly {
+  year: number;
+  years: number[];
+  monthly: InvoiceMonth[];
+  clients: InvoiceClientTotal[];
 }
 
 export interface TrendPoint {
@@ -134,6 +150,11 @@ export class AnalyticsService {
 
   summary(): Observable<DashboardSummary> {
     return this.http.get<DashboardSummary>(`${this.base}/summary`);
+  }
+
+  invoiceYearly(year?: number): Observable<InvoiceYearly> {
+    const params: Record<string, number> = year ? { year } : {};
+    return this.http.get<InvoiceYearly>(`${this.base}/invoice-yearly`, { params });
   }
 
   milkProductionTrend(): Observable<{ data: TrendPoint[] }> {
